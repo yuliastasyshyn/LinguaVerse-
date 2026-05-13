@@ -1,0 +1,569 @@
+.profile-page {
+    padding: 32px 30px 40px;
+    background: #f8fafc;
+    min-height: 100vh;
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    color: #0f172a;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+    .profile-page {
+        margin-left: 0;
+        padding: 24px 20px;
+        max-width: 100%;
+    }
+}
+
+.profile-loading {
+    padding: 40px;
+    font-size: 22px;
+    text-align: center;
+}
+
+.profile-header {
+    margin-bottom: 24px;
+}
+
+.profile-title-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.profile-title-icon {
+    font-size: 1.8rem;
+    color: #006766;
+}
+
+.profile-header h1 {
+    margin: 0 0 4px;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.profile-header p {
+    margin: 0;
+    font-size: 1rem;
+    color: #475569;
+}
+
+/* Hero картка */
+.profile-hero-card {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    background: #ffffff;
+    border: 1px solid #eef2f6;
+    border-radius: 24px;
+    padding: 28px 32px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+
+.profile-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #006766, #006766);
+    color: white;
+    font-size: 2.5rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.profile-hero-info {
+    flex: 1;
+    min-width: 200px;
+}
+
+.profile-hero-info h2 {
+    margin: 0 0 8px;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.profile-hero-info p {
+    margin: 0 0 12px;
+    color: #475569;
+    font-size: 1rem;
+}
+
+/* Статистика блоки */
+.profile-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.stat-card {
+    background: #ffffff;
+    border: 1px solid #eef2f6;
+    border-radius: 20px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+}
+
+.stat-label {
+    display: block;
+    font-size: 0.85rem;
+    color: #64748b;
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+.stat-value {
+    display: block;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #006766;
+}
+
+/* Секції профілю */
+.profile-section {
+    background: #ffffff;
+    border: 1px solid #eef2f6;
+    border-radius: 24px;
+    padding: 28px 32px;
+    margin-bottom: 24px;
+}
+
+.profile-section h3 {
+    margin: 0 0 20px;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.profile-info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.info-item label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.info-item p {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #0f172a;
+    font-weight: 500;
+}
+
+/* Велика статистика сітка */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+}
+
+.stat-large {
+    background: #f8fafc;
+    border: 1px solid #eef2f6;
+    border-radius: 20px;
+    padding: 24px 16px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    transition: all 0.2s;
+}
+
+.stat-large:hover {
+    border-color: #006766;
+    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.1);
+}
+
+.stat-icon {
+    font-size: 2rem;
+    display: block;
+}
+
+.stat-title {
+    font-size: 0.9rem;
+    color: #64748b;
+    font-weight: 500;
+    display: block;
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #006766;
+    display: block;
+}
+
+.profile-badges {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 14px;
+    border-radius: 40px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.badge-level {
+    background: #dcebe5;
+    color: #006766;
+}
+
+.badge-xp {
+    background: #f3e8ff;
+    color: #006766;
+}
+
+/* Загальні картки */
+.profile-card {
+    background: #ffffff;
+    border: 1px solid #eef2f6;
+    border-radius: 24px;
+    padding: 24px 28px;
+    margin-bottom: 24px;
+    overflow-x: auto;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.profile-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.profile-card-header h3 {
+    margin: 0 0 4px;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.profile-card-header p {
+    margin: 0;
+    color: #475569;
+    font-size: 0.9rem;
+}
+
+.profile-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.dark-btn,
+.light-btn {
+    border: none;
+    border-radius: 40px;
+    padding: 10px 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.dark-btn {
+    background: #0f172a;
+    color: #ffffff;
+}
+
+.dark-btn:hover:not(:disabled) {
+    background: #1e293b;
+}
+
+.light-btn {
+    background: #f1f5f9;
+    color: #006766;
+}
+
+.light-btn:hover {
+    background: #e2e8f0;
+}
+
+.dark-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Сітка форм – виправлено переповнення */
+.profile-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    width: 100%;
+}
+
+.full-width {
+    grid-column: 1 / -1;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+    /* FIX: дозволяє тексту скорочуватись */
+}
+
+.form-group label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #334155;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    /* Замінюємо жорстку висоту на мінімальну для гнучкості */
+    min-height: 48px;
+    border: 1px solid #e2e8f0;
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 8px 16px;
+    /* Додаємо вертикальні падінги для центрування */
+    font-size: 0.95rem;
+    line-height: 1.5;
+    /* Забезпечує правильну висоту рядка тексту */
+    color: #0f172a;
+    outline: none;
+    transition: all 0.2s;
+    box-sizing: border-box;
+    display: block;
+    appearance: none;
+    /* Прибираємо стандартний вигляд селекта в Safari/Chrome */
+}
+
+.form-group select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    background-size: 16px;
+    padding-right: 40px;
+    /* Місце для стрілочки */
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #006766;
+}
+
+.form-group input:disabled,
+.form-group select:disabled {
+    background: #f8fafc;
+    color: #64748b;
+}
+
+.profile-double-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+/* Перемикачі */
+.toggle-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.toggle-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.toggle-info {
+    flex: 1;
+    min-width: 150px;
+    /* FIX: щоб не стискалось занадто */
+}
+
+.toggle-info strong {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 1rem;
+    color: #0f172a;
+}
+
+.toggle-info p {
+    margin: 0;
+    color: #475569;
+    font-size: 0.85rem;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 52px;
+    height: 28px;
+    flex-shrink: 0;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    inset: 0;
+    background: #cbd5e1;
+    border-radius: 999px;
+    transition: 0.3s;
+    cursor: pointer;
+}
+
+.slider::before {
+    content: "";
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    left: 3px;
+    top: 3px;
+    background: white;
+    border-radius: 50%;
+    transition: 0.3s;
+}
+
+.switch input:checked+.slider {
+    background: linear-gradient(135deg, #006766, #006766);
+}
+
+.switch input:checked+.slider::before {
+    transform: translateX(24px);
+}
+
+/* Статистика */
+.stats-card {
+    background: #f8fafc;
+    border: 1px solid #eef2f6;
+    border-radius: 24px;
+    padding: 24px 28px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.stats-title {
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+    color: #0f172a;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 20px;
+}
+
+.stats-item {
+    text-align: center;
+}
+
+.stats-item strong {
+    display: block;
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin-bottom: 6px;
+}
+
+.stats-item:nth-child(1) strong {
+    color: #006766;
+}
+
+.stats-item:nth-child(2) strong {
+    color: #f97316;
+}
+
+.stats-item:nth-child(3) strong {
+    color: #006766;
+}
+
+.stats-item:nth-child(4) strong {
+    color: #16a34a;
+}
+
+.stats-item span {
+    font-size: 0.85rem;
+    color: #475569;
+}
+
+/* Адаптивність */
+@media (max-width: 900px) {
+
+    .profile-grid,
+    .profile-double-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-card-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .profile-hero-card {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .profile-info-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .profile-page {
+        padding: 20px 16px;
+    }
+
+    .profile-card {
+        padding: 20px;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-stats {
+        grid-template-columns: 1fr;
+    }
+}

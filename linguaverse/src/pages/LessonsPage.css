@@ -1,0 +1,589 @@
+/* LessonsPage.css – у стилі RoomsPage, один стовпчик, без перекриття з сайдбаром */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.lessons-page {
+    max-width: 1000px;
+    /* обмежуємо ширину для кращого читання */
+    margin: 0 auto;
+    /* центруємо контент, але не заважає сайдбару */
+    padding: 32px 40px;
+    background: #f8fafc;
+    /* єдиний фон з HomePage / RoomsPage */
+    min-height: 100vh;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    color: #0f172a;
+}
+
+/* Заголовок */
+.lessons-header {
+    margin-bottom: 32px;
+}
+
+.lessons-title-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.lessons-title-icon {
+    width: 48px;
+    height: 48px;
+    background: #ffffff;
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+    color: #006766;
+}
+
+.lessons-title-icon svg {
+    width: 28px;
+    height: 28px;
+}
+
+.lessons-header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0 0 6px;
+    color: #0f172a;
+    letter-spacing: -0.01em;
+}
+
+.lessons-header p {
+    font-size: 1rem;
+    color: #475569;
+    margin: 0;
+}
+
+/* Картка загального прогресу */
+.lessons-overview-card {
+    background: #ffffff;
+    border-radius: 24px;
+    padding: 28px 32px;
+    margin-bottom: 32px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+    border: 1px solid #eef2f6;
+}
+
+.overview-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.overview-top h2 {
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin: 0 0 6px;
+    color: #0f172a;
+}
+
+.overview-top p {
+    font-size: 0.9rem;
+    color: #475569;
+    margin: 0;
+}
+
+.overview-badge {
+    background: #dcebe5;
+    padding: 8px 20px;
+    border-radius: 40px;
+    font-weight: 600;
+    color: #006766;
+    font-size: 0.9rem;
+}
+
+.course-progress-bar {
+    background: #e2e8f0;
+    height: 8px;
+    border-radius: 20px;
+    overflow: hidden;
+    margin-bottom: 24px;
+}
+
+.course-progress-fill {
+    background: #006766;
+    height: 100%;
+    width: 0%;
+    border-radius: 20px;
+}
+
+.overview-stats {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.overview-mini-card {
+    background: #f8fafc;
+    border-radius: 20px;
+    padding: 16px 24px;
+    min-width: 120px;
+    text-align: center;
+    border: 1px solid #eef2f6;
+}
+
+.overview-label {
+    font-size: 0.8rem;
+    color: #64748b;
+    display: block;
+    margin-bottom: 6px;
+}
+
+.overview-mini-card strong {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+/* Фільтри */
+.lessons-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 32px;
+}
+
+.filter-btn {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    padding: 10px 24px;
+    border-radius: 40px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #475569;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.filter-btn:hover {
+    border-color: #006766;
+    color: #006766;
+}
+
+.filter-btn.active {
+    background: #006766;
+    color: white;
+    border-color: #006766;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+/* Сітка уроків – один стовпчик */
+.lessons-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* Картка уроку */
+.lesson-card {
+    background: #ffffff;
+    border-radius: 24px;
+    padding: 28px 32px;
+    border: 1px solid #eef2f6;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.lesson-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 16px 32px rgba(102, 126, 234, 0.15);
+    border-color: #667eea;
+    background: #fafbfc;
+}
+
+.lesson-card:active {
+    transform: translateY(-4px);
+}
+
+.lesson-card-top {
+    margin-bottom: 20px;
+}
+
+.lesson-meta-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.lesson-level {
+    background: #dcebe5;
+    padding: 4px 12px;
+    border-radius: 30px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #006766;
+}
+
+.lesson-status {
+    padding: 4px 12px;
+    border-radius: 30px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.lesson-status--completed {
+    background: #e6f7e6;
+    color: #15803d;
+}
+
+.lesson-status--in_progress {
+    background: #fff3e0;
+    color: #b45309;
+}
+
+.lesson-status--not_started {
+    background: #f1f5f9;
+    color: #475569;
+}
+
+.lesson-card h3 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin: 0 0 12px;
+    color: #0f172a;
+}
+
+.lesson-card p {
+    font-size: 0.95rem;
+    color: #475569;
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* Інформація про урок (тривалість, XP, категорія) */
+.lesson-info-row {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    border-top: 1px solid #eef2f6;
+    padding-top: 20px;
+}
+
+.lesson-info-item {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    font-size: 0.9rem;
+}
+
+.info-label {
+    color: #64748b;
+    font-weight: 500;
+}
+
+.lesson-info-item strong {
+    color: #0f172a;
+    font-weight: 600;
+}
+
+/* Прогрес уроку */
+.lesson-progress-block {
+    margin-bottom: 24px;
+}
+
+.lesson-progress-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: #475569;
+    margin-bottom: 8px;
+}
+
+.lesson-progress-bar {
+    background: #e2e8f0;
+    height: 6px;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.lesson-progress-fill {
+    background: #006766;
+    height: 100%;
+    border-radius: 10px;
+}
+
+/* Кнопка дії */
+.lesson-action-btn {
+    width: 100%;
+    padding: 12px;
+    border-radius: 60px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.lesson-action-btn--completed {
+    background: #f1f5f9;
+    color: #006766;
+}
+
+.lesson-action-btn--in_progress {
+    background: #006766;
+    color: white;
+}
+
+.lesson-action-btn--not_started {
+    background: #0f172a;
+    color: white;
+}
+
+.lesson-action-btn:hover {
+    transform: translateY(-1px);
+    filter: brightness(0.98);
+}
+
+.lessons-path-tabs {
+    display: flex;
+    gap: 12px;
+    margin: 24px 0;
+    flex-wrap: wrap;
+}
+
+.path-tab {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    padding: 10px 24px;
+    border-radius: 40px;
+    font-size: 0.95rem;
+    color: #475569;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.path-tab.active {
+    background: #006766;
+    color: white;
+    border-color: #006766;
+    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.18);
+}
+
+.flashcard-showcase,
+.custom-words-section {
+    background: #ffffff;
+    border: 1px solid #eef2f6;
+    border-radius: 24px;
+    padding: 28px 32px;
+    margin-bottom: 32px;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
+}
+
+.flashcard-header,
+.custom-words-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+}
+
+.flashcard-header h2,
+.custom-words-header h2 {
+    margin: 0;
+    font-size: 1.3rem;
+    color: #0f172a;
+}
+
+.flashcard-header p,
+.custom-words-header p {
+    margin: 0;
+    color: #475569;
+    font-size: 0.95rem;
+}
+
+.flashcard-controls {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.control-btn,
+.add-word-btn,
+.remove-word-btn {
+    background: #006766;
+    color: white;
+    border: none;
+    border-radius: 999px;
+    padding: 10px 20px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.control-btn:hover,
+.add-word-btn:hover,
+.remove-word-btn:hover {
+    filter: brightness(0.95);
+    transform: translateY(-1px);
+}
+
+.flashcard-sample-wrapper {
+    display: flex;
+    justify-content: center;
+}
+
+.flashcard-sample {
+    width: min(380px, 100%);
+    min-height: 180px;
+    border-radius: 28px;
+    border: 1px solid #e2e8f0;
+    perspective: 1200px;
+    background: transparent;
+    cursor: pointer;
+    position: relative;
+    padding: 0;
+}
+
+.flashcard-sample .flashcard-face {
+    width: 100%;
+    min-height: 180px;
+    border-radius: 28px;
+    backface-visibility: hidden;
+    transition: transform 0.6s ease;
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    box-shadow: 0 18px 42px rgba(15, 23, 42, 0.08);
+}
+
+.flashcard-sample .flashcard-front {
+    background: linear-gradient(135deg, #667eea 0%, #006766 100%);
+    color: white;
+}
+
+.flashcard-sample .flashcard-back {
+    background: #f8fafc;
+    color: #0f172a;
+    transform: rotateY(180deg);
+    border: 1px solid #e2e8f0;
+}
+
+.flashcard-sample.flipped .flashcard-front {
+    transform: rotateY(180deg);
+}
+
+.flashcard-sample.flipped .flashcard-back {
+    transform: rotateY(360deg);
+}
+
+.flashcard-face span {
+    font-size: 1.7rem;
+    line-height: 1.3;
+    text-align: center;
+    max-width: 90%;
+}
+
+.custom-word-form .form-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.custom-word-form label {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-weight: 600;
+    color: #0f172a;
+}
+
+.custom-word-form input {
+    width: 100%;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 14px 16px;
+    font-size: 0.95rem;
+    color: #0f172a;
+    background: #ffffff;
+}
+
+.custom-word-form input:focus {
+    outline: none;
+    border-color: #006766;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+}
+
+.custom-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 18px;
+}
+
+.custom-card {
+    background: #ffffff;
+    border-radius: 22px;
+    border: 1px solid #eef2f6;
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.04);
+    padding: 20px;
+}
+
+.custom-card-content {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.custom-card-content strong {
+    display: block;
+    font-size: 1.05rem;
+    margin-bottom: 8px;
+}
+
+.custom-card-content p {
+    margin: 0;
+    color: #475569;
+}
+
+.custom-empty {
+    color: #475569;
+    font-size: 0.95rem;
+}
+
+/* Адаптивність */
+@media (max-width: 768px) {
+    .lessons-page {
+        padding: 24px 20px;
+    }
+
+    .lesson-card {
+        padding: 20px;
+    }
+
+    .lesson-info-row {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .overview-stats {
+        flex-direction: column;
+    }
+
+    .overview-top {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
