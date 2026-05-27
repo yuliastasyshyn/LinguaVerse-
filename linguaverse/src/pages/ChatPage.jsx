@@ -3,6 +3,9 @@ import { useNavigate, useParams } from "react-router-dom";
 import { io } from "socket.io-client";
 import "./ChatPage.css";
 
+import { Bot, BookOpen, PencilLine, BookText } from "lucide-react";
+import { useTranslation } from "../i18n.jsx";
+
 const API_URL = "http://localhost:4000";
 
 function getStoredUser() {
@@ -37,6 +40,7 @@ export default function ChatPage() {
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
   const currentUser = useMemo(() => getStoredUser(), []);
+  const { t, translatePhrase, language } = useTranslation();
 
   const isRoomMode = Boolean(roomId);
 
@@ -57,7 +61,7 @@ export default function ChatPage() {
     {
       id: "welcome",
       role: "assistant",
-      text: "Привіт! Я AI-помічник LinguaVerse. Можу пояснити граматику, перекласти фразу, виправити речення або допомогти з навчанням.",
+      text: t("Привіт! Я AI-помічник LinguaVerse. Можу пояснити граматику, перекласти фразу, виправити речення або допомогти з навчанням."),
       createdAt: new Date().toISOString(),
     },
   ]);
@@ -71,6 +75,19 @@ export default function ChatPage() {
   const peerConnectionRef = useRef(null);
   const messagesEndRef = useRef(null);
   const aiEndRef = useRef(null);
+
+  useEffect(() => {
+    setAiMessages((prev) =>
+      prev.map((message) =>
+        message.id === "welcome"
+          ? {
+              ...message,
+              text: t("Привіт! Я AI-помічник LinguaVerse. Можу пояснити граматику, перекласти фразу, виправити речення або допомогти з навчанням."),
+            }
+          : message
+      )
+    );
+  }, [language, t]);
 
   const attachLocalStreamToVideo = useCallback(() => {
     if (!localVideoRef.current || !localStreamRef.current) return;
@@ -570,37 +587,44 @@ export default function ChatPage() {
     );
   }
 
-  if (!isRoomMode) {
-    return (
-      <div className="chat-page">
-        <div className="chat-shell ai-only-shell">
-          <aside className="room-ai-panel ai-standalone-panel">
-            <header className="room-ai-header">
-              <div>
-                <h2>🤖 AI-Помічник</h2>
-                <p>Запитайте про граматику, переклад, письмо або вивчення мови</p>
-              </div>
-            </header>
-
-            <div className="ai-quick-actions">
-              <button onClick={() => askAi("Поясни Present Simple простими словами з прикладами.")}>
-                📘 Граматика
-              </button>
-              <button onClick={() => askAi("Допоможи мені скласти коротке речення англійською.")}>
-                ✨ Скласти речення
-              </button>
-              <button onClick={() => askAi("Дай мені 10 корисних слів для щоденного спілкування англійською.")}>
-                📚 Нові слова
-              </button>
+if (!isRoomMode) {
+  return (
+    <div className="chat-page">
+      <div className="chat-shell ai-only-shell">
+        <aside className="room-ai-panel ai-standalone-panel">
+          <header className="room-ai-header">
+            <div>
+              <h2 className="ai-title">
+                <span className="ai-title-icon">AI</span>
+                AI-Помічник
+              </h2>
+              <p>Запитайте про граматику, переклад, письмо або вивчення мови</p>
             </div>
+          </header>
 
+          <div className="ai-quick-actions">
+            <button onClick={() => askAi("Поясни Present Simple простими словами з прикладами.")}>
+              <span className="quick-action-icon">G</span>
+              <span>Граматика</span>
+            </button>
+
+            <button onClick={() => askAi("Допоможи мені скласти коротке речення англійською.")}>
+              <span className="quick-action-icon">S</span>
+              <span>Скласти речення</span>
+            </button>
+
+            <button onClick={() => askAi("Дай мені 10 корисних слів для щоденного спілкування англійською.")}>
+              <span className="quick-action-icon">W</span>
+              <span>Нові слова</span>
+            </button>
+          </div>
             <div className="ai-chat-window">
               {aiMessages.map((message) => (
                 <div
                   key={message.id}
                   className={`ai-chat-message ${message.role === "user" ? "user" : "assistant"}`}
                 >
-                  <p>{message.text}</p>
+                  <p>{translatePhrase(message.text)}</p>
                   <span>{formatTime(message.createdAt)}</span>
                 </div>
               ))}
@@ -789,7 +813,7 @@ export default function ChatPage() {
                   key={message.id}
                   className={`ai-chat-message ${message.role === "user" ? "user" : "assistant"}`}
                 >
-                  <p>{message.text}</p>
+                  <p>{translatePhrase(message.text)}</p>
                   <span>{formatTime(message.createdAt)}</span>
                 </div>
               ))}

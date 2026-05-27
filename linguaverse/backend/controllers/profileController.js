@@ -1,6 +1,5 @@
 import { pool } from "../db/index.js";
 
-// Допоміжна функція для визначення рівня по XP
 function calculateLevel(xp) {
   if (xp >= 2000) return "B2";
   if (xp >= 1200) return "B1";
@@ -8,7 +7,7 @@ function calculateLevel(xp) {
   return "A1";
 }
 
-// Створити таблиці налаштувань користувача якщо їхнього немає
+
 const ensureUserSettingsTable = async () => {
   await pool.query(
     `CREATE TABLE IF NOT EXISTS user_settings (
@@ -25,14 +24,12 @@ const ensureUserSettingsTable = async () => {
   );
 };
 
-// ==============================
-// GET PROFILE
-// ==============================
+
 export const getProfile = async (req, res) => {
   try {
     const userId = req.user.id;
     
-    // Переконатися, що таблиця существует
+  
     await ensureUserSettingsTable();
 
     const userResult = await pool.query(
@@ -46,7 +43,7 @@ export const getProfile = async (req, res) => {
       return res.status(404).json({ message: "Користувача не знайдено" });
     }
 
-    // Crear la fila de configuración del usuario si no existe
+
     await pool.query(
       `INSERT INTO user_settings (user_id)
        VALUES ($1)
@@ -112,14 +109,12 @@ export const getProfile = async (req, res) => {
   }
 };
 
-// ==============================
-// UPDATE PROFILE
-// ==============================
+
 export const updateProfile = async (req, res) => {
   try {
     const userId = req.user.id;
     
-    // Переконатися, що таблиця існує
+    
     await ensureUserSettingsTable();
 
     const {

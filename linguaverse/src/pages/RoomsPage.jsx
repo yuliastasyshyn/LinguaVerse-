@@ -50,6 +50,34 @@ export default function RoomsPage() {
     navigate("/rooms/create");
   };
 
+  const translateTopic = (topic) => {
+    const topics = {
+      "Daily Life": "Повсякденне життя",
+      Movies: "Фільми",
+      Technology: "Технології",
+      Travel: "Подорожі",
+      Business: "Бізнес",
+      Food: "Їжа",
+      General: "Загальна",
+      Sports: "Спорт",
+    };
+
+    return topics[topic] || topic || "Загальна";
+  };
+
+  const translateLanguage = (language) => {
+    const languages = {
+      English: "Англійська",
+      Spanish: "Іспанська",
+      French: "Французька",
+      Italian: "Італійська",
+      German: "Німецька",
+      Portuguese: "Португальська",
+    };
+
+    return languages[language] || language || "Англійська";
+  };
+
   const filteredRooms = rooms.filter((room) => {
     const roomTitle = (room?.title || room?.name || "").toLowerCase();
     const roomTopic = (room?.topic || "").toLowerCase();
@@ -74,20 +102,22 @@ export default function RoomsPage() {
   });
 
   if (loading) {
-    return <div className="loading">Loading rooms...</div>;
+    return <div className="loading">Завантаження кімнат...</div>;
   }
 
   return (
     <div className="rooms-page">
       <div className="rooms-header">
-        <h1 className="rooms-title">Conversation Rooms</h1>
-        <p className="rooms-subtitle">Join a room and start practicing</p>
+        <h1 className="rooms-title">Мовні кімнати</h1>
+        <p className="rooms-subtitle">
+          Приєднайтеся до кімнати та практикуйте мову
+        </p>
       </div>
 
       <div className="rooms-filters">
         <input
           type="text"
-          placeholder="🔍 Search rooms..."
+          placeholder="🔍 Пошук кімнат..."
           className="filter-search"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
@@ -98,15 +128,15 @@ export default function RoomsPage() {
           value={topicFilter}
           onChange={(e) => setTopicFilter(e.target.value)}
         >
-          <option>All Topics</option>
-          <option>Daily Life</option>
-          <option>Movies</option>
-          <option>Technology</option>
-          <option>Travel</option>
-          <option>Business</option>
-          <option>Food</option>
-          <option>General</option>
-          <option>Sports</option>
+          <option value="All Topics">Усі теми</option>
+          <option value="Daily Life">Повсякденне життя</option>
+          <option value="Movies">Фільми</option>
+          <option value="Technology">Технології</option>
+          <option value="Travel">Подорожі</option>
+          <option value="Business">Бізнес</option>
+          <option value="Food">Їжа</option>
+          <option value="General">Загальна</option>
+          <option value="Sports">Спорт</option>
         </select>
 
         <select
@@ -114,13 +144,13 @@ export default function RoomsPage() {
           value={languageFilter}
           onChange={(e) => setLanguageFilter(e.target.value)}
         >
-          <option>All Languages</option>
-          <option>English</option>
-          <option>Spanish</option>
-          <option>French</option>
-          <option>Italian</option>
-          <option>German</option>
-          <option>Portuguese</option>
+          <option value="All Languages">Усі мови</option>
+          <option value="English">Англійська</option>
+          <option value="Spanish">Іспанська</option>
+          <option value="French">Французька</option>
+          <option value="Italian">Італійська</option>
+          <option value="German">Німецька</option>
+          <option value="Portuguese">Португальська</option>
         </select>
 
         <select
@@ -128,22 +158,22 @@ export default function RoomsPage() {
           value={levelFilter}
           onChange={(e) => setLevelFilter(e.target.value)}
         >
-          <option>All Levels</option>
-          <option>A1</option>
-          <option>A2</option>
-          <option>B1</option>
-          <option>B2</option>
-          <option>C1</option>
+          <option value="All Levels">Усі рівні</option>
+          <option value="A1">A1</option>
+          <option value="A2">A2</option>
+          <option value="B1">B1</option>
+          <option value="B2">B2</option>
+          <option value="C1">C1</option>
         </select>
 
         <button className="btn-create" onClick={handleCreateRoom}>
-          + Create Room
+          + Створити кімнату
         </button>
       </div>
 
       <div className="rooms-grid">
         {filteredRooms.length === 0 ? (
-          <div className="no-rooms">No rooms found.</div>
+          <div className="no-rooms">Кімнат не знайдено.</div>
         ) : (
           filteredRooms.map((room) => (
             <div key={room.id} className="room-card">
@@ -153,17 +183,24 @@ export default function RoomsPage() {
                 >
                   {room.level || "A1"}
                 </span>
-                <span className="room-topic">{room.topic || "General"}</span>
+
+                <span className="room-topic">
+                  {translateTopic(room.topic)}
+                </span>
               </div>
 
-              <h3 className="room-name">{room.title || room.name || "Untitled Room"}</h3>
+              <h3 className="room-name">
+                {room.title || room.name || "Кімната без назви"}
+              </h3>
 
               <div className="room-details">
                 <span className="room-language">
-                  🌐 {room.language || "English"}
+                  🌐 {translateLanguage(room.language)}
                 </span>
+
                 <span className="room-participants">
-                  👥 {room.participants ?? 0} / {room.max_participants ?? 10} participants
+                  👥 {room.participants ?? 0} /{" "}
+                  {room.max_participants ?? 10} учасників
                 </span>
               </div>
 
@@ -175,7 +212,7 @@ export default function RoomsPage() {
                 className="btn-join"
                 onClick={() => handleJoinRoom(room.id)}
               >
-                Join Room
+                Приєднатися
               </button>
             </div>
           ))

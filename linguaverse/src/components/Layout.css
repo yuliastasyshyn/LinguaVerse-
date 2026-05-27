@@ -6,7 +6,7 @@
 .main-content {
     flex: 1;
     margin-left: 320px;
-    /* нова ширина сайдбара */
+    
     padding: 32px 40px;
     background: #f4f7fc;
 }

@@ -12,6 +12,9 @@ export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const [passwordTouched, setPasswordTouched] = useState(false);
+  const [triedSubmit, setTriedSubmit] = useState(false);
+
   const [verificationCode, setVerificationCode] = useState("");
   const [error, setError] = useState("");
   const [msg, setMsg] = useState("");
@@ -24,18 +27,26 @@ export default function Register() {
       { label: "Мінімум 1 мала літера", valid: /[a-zа-яіїєґ]/.test(password) },
       { label: "Мінімум 1 цифра", valid: /\d/.test(password) },
       {
-        label: "Мінімум 1 спеціальний символ: ! @ # $ % тощо",
+        label: "Мінімум 1 спеціальний символ: ! @ # $ %",
         valid: /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password),
       },
     ];
   }, [password]);
 
   const isPasswordValid = passwordRules.every((rule) => rule.valid);
+  const missingPasswordRules = passwordRules.filter((rule) => !rule.valid);
+
+  const showPasswordHint =
+    passwordTouched && password.length > 0 && !isPasswordValid;
+
+  const showPasswordError =
+    triedSubmit && password.length > 0 && !isPasswordValid;
 
   async function handleRegister(e) {
     e.preventDefault();
     setError("");
     setMsg("");
+    setTriedSubmit(true);
 
     if (!name.trim() || !email.trim() || !password.trim()) {
       setError("Заповніть усі поля.");
@@ -43,7 +54,7 @@ export default function Register() {
     }
 
     if (!isPasswordValid) {
-      setError("Пароль не відповідає вимогам.");
+      setError("Пароль ще недостатньо надійний. Перевірте підказку нижче.");
       return;
     }
 
@@ -53,7 +64,11 @@ export default function Register() {
       const res = await fetch(`${API_URL}/api/auth/send-verification-code`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: name.trim(), email: email.trim(), password }),
+        body: JSON.stringify({
+          name: name.trim(),
+          email: email.trim(),
+          password,
+        }),
       });
 
       const data = await res.json();
@@ -94,7 +109,10 @@ export default function Register() {
       const res = await fetch(`${API_URL}/api/auth/verify-registration-code`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email.trim(), code: verificationCode.trim() }),
+        body: JSON.stringify({
+          email: email.trim(),
+          code: verificationCode.trim(),
+        }),
       });
 
       const data = await res.json();
@@ -124,7 +142,11 @@ export default function Register() {
       const res = await fetch(`${API_URL}/api/auth/send-verification-code`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: name.trim(), email: email.trim(), password }),
+        body: JSON.stringify({
+          name: name.trim(),
+          email: email.trim(),
+          password,
+        }),
       });
 
       const data = await res.json();
@@ -134,7 +156,7 @@ export default function Register() {
         return;
       }
 
-      setMsg("Новий код підтвердження надіслано на пошту.");
+      setMsg("Новий код підтвердження надіслано на вашу пошту.");
     } catch (err) {
       console.error(err);
       setError("Помилка сервера. Спробуйте пізніше.");
@@ -148,12 +170,12 @@ export default function Register() {
       <div className="auth-box">
         {step === "form" ? (
           <>
-            <h2>Create Account</h2>
+            <h2>Створити акаунт</h2>
 
             <form className="auth-form" onSubmit={handleRegister}>
               <input
                 type="text"
-                placeholder="Name"
+                placeholder="Ім’я"
                 value={name}
                 autoComplete="name"
                 onChange={(e) => setName(e.target.value)}
@@ -161,45 +183,62 @@ export default function Register() {
 
               <input
                 type="email"
-                placeholder="Email"
+                placeholder="Електронна пошта"
                 value={email}
                 autoComplete="email"
                 onChange={(e) => setEmail(e.target.value)}
               />
 
-              <input
-                type="password"
-                placeholder="Password"
-                value={password}
-                autoComplete="new-password"
-                onChange={(e) => setPassword(e.target.value)}
-              />
+              <div className="password-field">
+                <input
+                  type="password"
+                  placeholder="Пароль"
+                  value={password}
+                  autoComplete="new-password"
+                  onFocus={() => setPasswordTouched(true)}
+                  onBlur={() => setPasswordTouched(false)}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    setError("");
+                  }}
+                  className={showPasswordError ? "input-error" : ""}
+                />
 
-              <div className="password-rules">
-                <p>Вимоги до пароля:</p>
-                {passwordRules.map((rule) => (
-                  <div className={`password-rule ${rule.valid ? "valid" : ""}`} key={rule.label}>
-                    <span>{rule.valid ? "✓" : "•"}</span>
-                    {rule.label}
+                {showPasswordHint && (
+                  <div className="password-popover">
+                    <p>Ще потрібно:</p>
+
+                    {missingPasswordRules.map((rule) => (
+                      <div className="password-rule" key={rule.label}>
+                        <span>•</span>
+                        {rule.label}
+                      </div>
+                    ))}
                   </div>
-                ))}
+                )}
               </div>
+
+              {password.length > 0 && isPasswordValid && (
+                <p className="password-ok">✓ Надійний пароль</p>
+              )}
 
               {error && <p className="error">{error}</p>}
               {msg && <p className="success">{msg}</p>}
 
               <button type="submit" disabled={loading}>
-                {loading ? "Sending code..." : "Register"}
+                {loading ? "Надсилання коду..." : "Зареєструватися"}
               </button>
             </form>
 
-            <p className="switch-text" onClick={() => navigate("/login")}>
-              Already have an account? <span>Sign in</span>
-            </p>
+            {!showPasswordHint && (
+              <p className="switch-text" onClick={() => navigate("/login")}>
+                Вже маєте акаунт? <span>Увійти</span>
+              </p>
+            )}
           </>
         ) : (
           <>
-            <h2>Verify Email</h2>
+            <h2>Підтвердження пошти</h2>
 
             <p className="auth-subtitle">
               Ми надіслали 6-значний код на <strong>{email}</strong>.
@@ -209,18 +248,20 @@ export default function Register() {
             <form className="auth-form" onSubmit={handleVerifyCode}>
               <input
                 type="text"
-                placeholder="6-digit code"
+                placeholder="6-значний код"
                 value={verificationCode}
                 inputMode="numeric"
                 maxLength={6}
-                onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, ""))}
+                onChange={(e) =>
+                  setVerificationCode(e.target.value.replace(/\D/g, ""))
+                }
               />
 
               {error && <p className="error">{error}</p>}
               {msg && <p className="success">{msg}</p>}
 
               <button type="submit" disabled={loading}>
-                {loading ? "Checking..." : "Confirm registration"}
+                {loading ? "Перевірка..." : "Підтвердити реєстрацію"}
               </button>
             </form>
 

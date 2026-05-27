@@ -1,0 +1,140 @@
+
+
+ALTER TABLE users
+ADD COLUMN IF NOT EXISTS role VARCHAR(20) DEFAULT 'user',
+ADD COLUMN IF NOT EXISTS status VARCHAR(20) DEFAULT 'active',
+ADD COLUMN IF NOT EXISTS daily_goal INTEGER DEFAULT 30,
+ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+
+UPDATE users SET role = 'user' WHERE role IS NULL;
+
+UPDATE users SET status = 'active' WHERE status IS NULL;
+
+UPDATE users SET daily_goal = 30 WHERE daily_goal IS NULL;
+
+CREATE TABLE IF NOT EXISTS lessons (
+  id SERIAL PRIMARY KEY,
+  title VARCHAR(255) NOT NULL,
+  description TEXT DEFAULT '',
+  language VARCHAR(80) DEFAULT 'English',
+  level VARCHAR(20) DEFAULT 'A1',
+  duration INTEGER DEFAULT 10,
+  category VARCHAR(120) DEFAULT 'General',
+  tags TEXT DEFAULT '',
+  content TEXT DEFAULT '',
+  exercises JSONB DEFAULT '[]'::jsonb,
+  vocabulary JSONB DEFAULT '[]'::jsonb,
+  status VARCHAR(20) DEFAULT 'draft',
+  views INTEGER DEFAULT 0,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+ALTER TABLE lessons
+ADD COLUMN IF NOT EXISTS description TEXT DEFAULT '',
+ADD COLUMN IF NOT EXISTS language VARCHAR(80) DEFAULT 'English',
+ADD COLUMN IF NOT EXISTS level VARCHAR(20) DEFAULT 'A1',
+ADD COLUMN IF NOT EXISTS duration INTEGER DEFAULT 10,
+ADD COLUMN IF NOT EXISTS category VARCHAR(120) DEFAULT 'General',
+ADD COLUMN IF NOT EXISTS tags TEXT DEFAULT '',
+ADD COLUMN IF NOT EXISTS content TEXT DEFAULT '',
+ADD COLUMN IF NOT EXISTS exercises JSONB DEFAULT '[]'::jsonb,
+ADD COLUMN IF NOT EXISTS vocabulary JSONB DEFAULT '[]'::jsonb,
+ADD COLUMN IF NOT EXISTS status VARCHAR(20) DEFAULT 'draft',
+ADD COLUMN IF NOT EXISTS views INTEGER DEFAULT 0,
+ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+
+CREATE TABLE IF NOT EXISTS challenges (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    description TEXT DEFAULT '',
+    xp_reward INTEGER DEFAULT 50,
+    deadline DATE,
+    difficulty VARCHAR(30) DEFAULT 'medium',
+    badge VARCHAR(50) DEFAULT '🏆',
+    status VARCHAR(20) DEFAULT 'active',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+ALTER TABLE challenges
+ADD COLUMN IF NOT EXISTS description TEXT DEFAULT '',
+ADD COLUMN IF NOT EXISTS xp_reward INTEGER DEFAULT 50,
+ADD COLUMN IF NOT EXISTS deadline DATE,
+ADD COLUMN IF NOT EXISTS difficulty VARCHAR(30) DEFAULT 'medium',
+ADD COLUMN IF NOT EXISTS badge VARCHAR(50) DEFAULT '🏆',
+ADD COLUMN IF NOT EXISTS status VARCHAR(20) DEFAULT 'active',
+ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+
+ALTER TABLE rooms
+ADD COLUMN IF NOT EXISTS status VARCHAR(20) DEFAULT 'active',
+ADD COLUMN IF NOT EXISTS topic TEXT DEFAULT '',
+ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+
+ALTER TABLE reviews
+ADD COLUMN IF NOT EXISTS status VARCHAR(20) DEFAULT 'pending',
+ADD COLUMN IF NOT EXISTS featured BOOLEAN DEFAULT false,
+ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+
+CREATE TABLE IF NOT EXISTS reports (
+    id SERIAL PRIMARY KEY,
+    reporter_id INTEGER REFERENCES users (id) ON DELETE SET NULL,
+    target_type VARCHAR(50) DEFAULT 'general',
+    target_id INTEGER,
+    reason VARCHAR(120) NOT NULL,
+    content TEXT DEFAULT '',
+    status VARCHAR(20) DEFAULT 'open',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS ai_logs (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users (id) ON DELETE SET NULL,
+    mode VARCHAR(80) DEFAULT 'general-assistant',
+    prompt_preview TEXT DEFAULT '',
+    status VARCHAR(30) DEFAULT 'success',
+    response_time_ms INTEGER DEFAULT 0,
+    error_message TEXT DEFAULT '',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS system_settings (
+    key VARCHAR(120) PRIMARY KEY,
+    value TEXT NOT NULL
+);
+
+INSERT INTO
+    system_settings (key, value)
+VALUES ('app_name', 'LinguaVerse.AI'),
+    ('maintenance_mode', 'false'),
+    ('default_daily_goal', '30'),
+    ('daily_xp_limit', '300'),
+    ('max_room_participants', '20'),
+    (
+        'supported_languages',
+        'English,Ukrainian,German,French,Spanish,Italian,Polish'
+    ) ON CONFLICT (key) DO NOTHING;
+
+CREATE TABLE IF NOT EXISTS admin_logs (
+    id SERIAL PRIMARY KEY,
+    admin_id INTEGER REFERENCES users (id) ON DELETE SET NULL,
+    action VARCHAR(120) NOT NULL,
+    entity_type VARCHAR(80),
+    entity_id INTEGER,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS badges (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(120) NOT NULL,
+    description TEXT DEFAULT '',
+    icon VARCHAR(30) DEFAULT '🏅',
+    xp_value INTEGER DEFAULT 0,
+    unlock_condition TEXT DEFAULT '',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS user_badges (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users (id) ON DELETE CASCADE,
+    badge_id INTEGER REFERENCES badges (id) ON DELETE CASCADE,
+    earned_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

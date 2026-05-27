@@ -62,7 +62,7 @@ export const getDictionaryWords = async (req, res) => {
 
 export const addDictionaryWord = async (req, res) => {
   try {
-    const { word, translation, collectionId } = req.body;
+    const { word, translation, collectionId, rating, context } = req.body;
 
     if (!word || !translation) {
       return res.status(400).json({ error: "Word and translation are required" });
@@ -72,6 +72,7 @@ export const addDictionaryWord = async (req, res) => {
     const normalizedWord = word.trim();
     const normalizedTranslation = translation.trim();
     const normalizedCollectionId = collectionId ? Number(collectionId) : null;
+    const wordRating = rating ? Math.min(Math.max(Number(rating), 1), 5) : 5;
 
     if (!normalizedWord || !normalizedTranslation) {
       return res.status(400).json({ error: "Word and translation cannot be empty" });
@@ -89,6 +90,8 @@ export const addDictionaryWord = async (req, res) => {
       word: normalizedWord,
       translation: normalizedTranslation,
       collectionId: normalizedCollectionId,
+      rating: wordRating,
+      context: context || "",
       addedAt: new Date().toISOString(),
     };
 

@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from "react";
+
+import { useTranslation } from "../i18n.jsx";
 import "./ProfilePage.css";
 
 export default function ProfilePage() {
+  
+  const { t, language, changeLanguage, languages, languageLabels } = useTranslation();
   const token = localStorage.getItem("token");
 
   const [loading, setLoading] = useState(true);
@@ -115,7 +119,8 @@ const handleSave = async () => {
     const data = await res.json();
 
     if (!res.ok) {
-      alert(data.message || "Помилка при збереженні");
+  
+      alert(data.message || t("profile.saveError"));
       return;
     }
 
@@ -130,19 +135,20 @@ const handleSave = async () => {
 
     await fetchProfile();
     setEditMode(false);
-    alert("Профіль успішно оновлено");
+    alert(t("profile.updateSuccess"));
 
     window.dispatchEvent(new Event("userUpdated"));
   } catch (error) {
     console.error("Save profile failed:", error);
-    alert("Помилка сервера");
+    alert(t("profile.serverError"));
   } finally {
     setSaving(false);
   }
 };
 
   if (loading) {
-    return <div className="profile-loading">Завантаження профілю...</div>;
+   
+    return <div className="profile-loading">{t("profile.loading")}</div>;
   }
 
   const firstLetter = profile.user.name?.charAt(0)?.toUpperCase() || "K";
@@ -153,8 +159,9 @@ const handleSave = async () => {
         <div className="profile-title-row">
           <div className="profile-title-icon">👤</div>
           <div>
-            <h1>Профіль</h1>
-            <p>Керуйте своїм обліковим записом та налаштуваннями</p>
+            {/* Use translated title and subtitle */}
+            <h1>{t("profile.title")}</h1>
+            <p>{t("profile.subtitle")}</p>
           </div>
         </div>
       </div>
@@ -176,21 +183,21 @@ const handleSave = async () => {
       <section className="profile-card">
         <div className="profile-card-header">
           <div>
-            <h3>⚙ Особиста інформація</h3>
-            <p>Оновіть ваші особисті дані</p>
+            <h3>⚙ {t("profile.personalInfo")}</h3>
+            <p>{t("profile.updatePersonal")}</p>
           </div>
 
           {!editMode ? (
             <button className="dark-btn" onClick={() => setEditMode(true)}>
-              Редагувати
+              {t("profile.edit")}
             </button>
           ) : (
             <div className="profile-actions">
               <button className="light-btn" onClick={() => setEditMode(false)}>
-                Скасувати
+                {t("profile.cancel")}
               </button>
               <button className="dark-btn" onClick={handleSave} disabled={saving}>
-                {saving ? "Збереження..." : "Зберегти"}
+                {saving ? t("profile.saving") : t("profile.save")}
               </button>
             </div>
           )}
@@ -198,7 +205,7 @@ const handleSave = async () => {
 
         <div className="profile-grid">
           <div className="form-group">
-            <label>Ім'я</label>
+            <label>{t("profile.name")}</label>
             <input
               type="text"
               name="name"
@@ -209,7 +216,7 @@ const handleSave = async () => {
           </div>
 
           <div className="form-group">
-            <label>Email</label>
+            <label>{t("profile.email")}</label>
             <input
               type="email"
               value={profile.user.email}
@@ -222,14 +229,15 @@ const handleSave = async () => {
       <section className="profile-card">
         <div className="profile-card-header">
           <div>
-            <h3>🌐 Налаштування навчання</h3>
-            <p>Налаштуйте свій навчальний процес</p>
+            <h3>🌐 {t("profile.learningSettings")}</h3>
+            <p>{t("profile.learningSettingsSubtitle")}</p>
           </div>
         </div>
 
         <div className="profile-grid">
+          {/* Native language selection */}
           <div className="form-group">
-            <label>Рідна мова</label>
+            <label>{t("profile.nativeLanguage")}</label>
             <select
               name="native_language"
               value={form.native_language}
@@ -245,8 +253,9 @@ const handleSave = async () => {
             </select>
           </div>
 
+          {/* Learning language selection */}
           <div className="form-group">
-            <label>Мова, яку вивчаєте</label>
+            <label>{t("profile.learningLanguage")}</label>
             <select
               name="learning_language"
               value={form.learning_language}
@@ -262,8 +271,9 @@ const handleSave = async () => {
             </select>
           </div>
 
+          {/* Daily goal selection */}
           <div className="form-group full-width">
-            <label>Денна ціль (XP)</label>
+            <label>{t("profile.dailyGoal")}</label>
             <select
               name="daily_goal_xp"
               value={form.daily_goal_xp}
@@ -276,6 +286,21 @@ const handleSave = async () => {
               <option value={100}>100 XP (20 хвилин/день)</option>
             </select>
           </div>
+
+          {/* Interface language switcher. This select controls the UI language for the entire app. */}
+          <div className="form-group full-width">
+            <label>{t("profile.interfaceLanguage")}</label>
+            <select
+              value={language}
+              onChange={(e) => changeLanguage(e.target.value)}
+            >
+              {languages.map((lng) => (
+                <option key={lng} value={lng}>
+                  {languageLabels[lng]}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
       </section>
 
@@ -283,15 +308,15 @@ const handleSave = async () => {
         <section className="profile-card">
           <div className="profile-card-header">
             <div>
-              <h3>🔔 Сповіщення</h3>
+              <h3>🔔 {t("profile.notifications")}</h3>
             </div>
           </div>
 
           <div className="toggle-list">
             <div className="toggle-row">
               <div>
-                <strong>Щоденні нагадування</strong>
-                <p>Отримувати нагадування про практику</p>
+                <strong>{t("profile.dailyReminders")}</strong>
+                <p>{t("profile.dailyRemindersDesc")}</p>
               </div>
               <label className="switch">
                 <input
@@ -307,8 +332,8 @@ const handleSave = async () => {
 
             <div className="toggle-row">
               <div>
-                <strong>Досягнення</strong>
-                <p>Сповіщення про нові досягнення</p>
+                <strong>{t("profile.achievements")}</strong>
+                <p>{t("profile.achievementsDesc")}</p>
               </div>
               <label className="switch">
                 <input
@@ -327,15 +352,15 @@ const handleSave = async () => {
         <section className="profile-card">
           <div className="profile-card-header">
             <div>
-              <h3>🛡 Приватність</h3>
+              <h3>🛡 {t("profile.privacy")}</h3>
             </div>
           </div>
 
           <div className="toggle-list">
             <div className="toggle-row">
               <div>
-                <strong>Публічний профіль</strong>
-                <p>Дозволити іншим бачити ваш профіль</p>
+                <strong>{t("profile.publicProfile")}</strong>
+                <p>{t("profile.publicProfileDesc")}</p>
               </div>
               <label className="switch">
                 <input
@@ -351,8 +376,8 @@ const handleSave = async () => {
 
             <div className="toggle-row">
               <div>
-                <strong>Статистика</strong>
-                <p>Показувати статистику у профілі</p>
+                <strong>{t("profile.stats")}</strong>
+                <p>{t("profile.statsDesc")}</p>
               </div>
               <label className="switch">
                 <input
@@ -370,27 +395,27 @@ const handleSave = async () => {
       </div>
 
       <section className="stats-card">
-        <div className="stats-title">◎ Загальна статистика</div>
+        <div className="stats-title">◎ {t("profile.overallStats")}</div>
 
         <div className="stats-grid">
           <div className="stats-item">
             <strong>{profile.progress.xp}</strong>
-            <span>Загальний XP</span>
+            <span>{t("profile.totalXP")}</span>
           </div>
 
           <div className="stats-item">
             <strong>{profile.progress.active_days}</strong>
-            <span>Днів поспіль</span>
+            <span>{t("profile.activeDays")}</span>
           </div>
 
           <div className="stats-item">
             <strong>{profile.derived.level}</strong>
-            <span>Поточний рівень</span>
+            <span>{t("profile.currentLevel")}</span>
           </div>
 
           <div className="stats-item">
             <strong>{profile.derived.badges}</strong>
-            <span>Значків</span>
+            <span>{t("profile.badges")}</span>
           </div>
         </div>
       </section>

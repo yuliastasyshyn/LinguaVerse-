@@ -15,6 +15,10 @@ import lessonsRoutes from "./routes/lessonsRoutes.js";
 import dictionaryRoutes from "./routes/dictionaryRoutes.js";
 import writingRoutes from "./routes/writingRoutes.js";
 import challengesRoutes from "./routes/challengesRoutes.js";
+import translateRoutes from "./routes/translateRoutes.js";
+import reviewRoutes from "./routes/reviewRoutes.js";
+import adminRoutes from "./routes/adminRoutes.js";
+
 
 import { register, login } from "./controllers/authController.js";
 import {
@@ -61,6 +65,7 @@ app.use("/api/pronunciation", auth, pronunciationRoutes);
 app.use("/api/writing", writingRoutes);
 app.use("/api/profile", profileRoutes);
 app.use("/api/challenges", auth, challengesRoutes);
+app.use("/api/translate", translateRoutes);
 
 app.get("/api/rooms", auth, getRooms);
 app.get("/api/rooms/:id", auth, getRoomById);
@@ -70,7 +75,8 @@ app.post("/api/rooms/:id/messages", auth, createMessageHandler);
 
 app.use("/api/lessons", auth, lessonsRoutes);
 app.use("/api/dictionary", auth, dictionaryRoutes);
-
+app.use("/api/reviews", reviewRoutes);
+app.use("/api/admin", adminRoutes);
 app.use(express.static(path.join(__dirname, "../dist")));
 
 app.use((req, res) => {

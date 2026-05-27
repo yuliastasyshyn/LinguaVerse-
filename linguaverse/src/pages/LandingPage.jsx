@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import "./LandingPage.css";
+import heroEmblem from "../assets/hero-emblem.png";
 
 const features = [
   {
@@ -33,25 +34,87 @@ const phraseExamples = [
   "Great! Тепер потренуємо природнішу фразу.",
 ];
 
-const testimonials = [
-  {
-    name: "Анна",
-    role: "вивчає англійську",
-    text: "Мені подобається, що тут усе не хаотично: є уроки, словник, прогрес і AI-пояснення. Стало легше займатися регулярно.",
-  },
-  {
-    name: "Марко",
-    role: "практикує speaking",
-    text: "Розмовні кімнати дуже допомагають. Можна писати з іншими, а якщо не знаєш слово — одразу питати AI.",
-  },
-  {
-    name: "Юлія",
-    role: "готується до навчання",
-    text: "Дизайн спокійний і не перевантажений. Хочеться заходити щодня й бачити свій прогрес.",
-  },
-];
-
 const LandingPage = () => {
+  const [reviews, setReviews] = useState([]);
+
+  const [reviewForm, setReviewForm] = useState({
+    email: "",
+    name: "",
+    rating: 5,
+    text: "",
+  });
+
+  const [reviewMessage, setReviewMessage] = useState("");
+  const [reviewLoading, setReviewLoading] = useState(false);
+
+  useEffect(() => {
+    fetchReviews();
+  }, []);
+
+  const fetchReviews = async () => {
+    try {
+      const res = await fetch("http://localhost:4000/api/reviews");
+      const data = await res.json();
+
+      if (res.ok) {
+        setReviews(data);
+      }
+    } catch (error) {
+      console.error("Reviews load error:", error);
+    }
+  };
+
+  const handleReviewSubmit = async (e) => {
+    e.preventDefault();
+
+    setReviewMessage("");
+
+    if (!reviewForm.email.trim() || !reviewForm.text.trim()) {
+      setReviewMessage("Введіть email зареєстрованого акаунта та текст відгуку.");
+      return;
+    }
+
+    try {
+      setReviewLoading(true);
+
+      const res = await fetch("http://localhost:4000/api/reviews", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...reviewForm,
+          email: reviewForm.email.trim().toLowerCase(),
+          text: reviewForm.text.trim(),
+          name: reviewForm.name.trim(),
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setReviewMessage(data.message || "Не вдалося залишити відгук.");
+        return;
+      }
+
+      setReviews((prevReviews) => [data, ...prevReviews]);
+
+      setReviewForm({
+        email: "",
+        name: "",
+        rating: 5,
+        text: "",
+      });
+
+      setReviewMessage("Дякуємо! Ваш відгук успішно додано.");
+    } catch (error) {
+      console.error("Review create error:", error);
+      setReviewMessage("Помилка зʼєднання із сервером.");
+    } finally {
+      setReviewLoading(false);
+    }
+  };
+
   return (
     <div className="landing-page">
       <header className="landing-header">
@@ -117,55 +180,10 @@ const LandingPage = () => {
               <div className="badge badge-ua">UA</div>
               <div className="badge badge-words">+12 нових слів</div>
 
-              <div className="emblem">
-                <div className="emblem-ring">
-                  <div className="emblem-title">EASY STUDYING</div>
-
-                  <svg viewBox="0 0 260 260" className="emblem-svg" aria-label="Easy studying of languages emblem">
-                    <circle cx="130" cy="130" r="118" fill="#fbf7ee" stroke="#004d4d" strokeWidth="8" />
-                    <circle cx="130" cy="130" r="98" fill="none" stroke="#0b6763" strokeWidth="3" />
-
-                    <path
-                      d="M78 157 C95 145,112 145,130 162 C148 145,165 145,182 157 L182 185 C165 174,147 176,130 191 C113 176,95 174,78 185 Z"
-                      fill="#f6efe2"
-                      stroke="#004d4d"
-                      strokeWidth="5"
-                    />
-
-                    <path d="M130 162 L130 191" stroke="#004d4d" strokeWidth="4" />
-                    <path d="M87 165 C101 158,115 159,126 169" stroke="#004d4d" strokeWidth="2" fill="none" />
-                    <path d="M174 165 C159 158,145 159,134 169" stroke="#004d4d" strokeWidth="2" fill="none" />
-
-                    <path d="M85 142 L112 78" stroke="#004d4d" strokeWidth="6" strokeLinecap="round" />
-                    <path
-                      d="M93 119 C102 103,111 91,124 78 C119 98,109 115,93 119Z"
-                      fill="#a6c4b4"
-                      stroke="#004d4d"
-                      strokeWidth="3"
-                    />
-
-                    <circle cx="173" cy="91" r="28" fill="#dcebe5" stroke="#004d4d" strokeWidth="4" />
-                    <path
-                      d="M145 91 H201 M173 63 V119 M154 73 C168 82,178 82,192 73 M154 109 C168 100,178 100,192 109"
-                      stroke="#004d4d"
-                      strokeWidth="3"
-                      fill="none"
-                    />
-
-                    <path d="M160 145 C179 132,194 113,205 88" stroke="#004d4d" strokeWidth="5" fill="none" strokeLinecap="round" />
-                    <path d="M205 88 L207 108 L190 96" fill="#004d4d" />
-
-                    <rect x="161" y="153" width="14" height="35" fill="#0b6763" rx="2" />
-                    <rect x="181" y="137" width="14" height="51" fill="#6f9f8f" rx="2" />
-                    <rect x="201" y="118" width="14" height="70" fill="#a6c4b4" rx="2" />
-
-                    <text x="130" y="226" textAnchor="middle" fontSize="24" fontWeight="700" fill="#004d4d">
-                      OF LANGUAGES
-                    </text>
-                  </svg>
-                </div>
-              </div>
-            </div>
+              <div className="emblem image-emblem">
+  <img src={heroEmblem} alt="Easy studying of languages" />
+</div>
+                          </div>
           </div>
         </section>
 
@@ -216,9 +234,8 @@ const LandingPage = () => {
             <p className="eyebrow">SMART LEARNING FLOW</p>
             <h2>Навчання, яке підлаштовується під твій темп</h2>
             <p>
-              Платформа допомагає поєднати лексику, письмо, вимову, спілкування
-              та щоденний прогрес в одному середовищі. Так користувач бачить не
-              просто окремі завдання, а повну картину свого розвитку.
+              Платформа допомагає поєднати лексику, письмо, вимову,
+              спілкування та щоденний прогрес в одному середовищі.
             </p>
           </div>
 
@@ -242,23 +259,107 @@ const LandingPage = () => {
           <div className="section-heading centered">
             <p className="eyebrow">USER REVIEWS</p>
             <h2>Відгуки користувачів</h2>
+            <p className="reviews-subtitle">
+              Залишити відгук можуть лише зареєстровані користувачі.
+              Для перевірки введіть електронну адресу, з якою створено акаунт.
+            </p>
           </div>
 
-          <div className="reviews-grid">
-            {testimonials.map((review) => (
-              <article className="review-card" key={review.name}>
-                <div className="quote-mark">“</div>
-                <p>{review.text}</p>
-                <div className="review-author">
-                  <div className="avatar">{review.name.charAt(0)}</div>
-                  <div>
-                    <h4>{review.name}</h4>
-                    <span>{review.role}</span>
+          <form className="review-form" onSubmit={handleReviewSubmit}>
+            <label>Електронна адреса</label>
+            <input
+              type="email"
+              placeholder="your.email@example.com"
+              value={reviewForm.email}
+              onChange={(e) =>
+                setReviewForm({ ...reviewForm, email: e.target.value })
+              }
+            />
+
+            <label>Ім'я (необов'язково)</label>
+            <input
+              type="text"
+              placeholder="Як вас звати?"
+              value={reviewForm.name}
+              onChange={(e) =>
+                setReviewForm({ ...reviewForm, name: e.target.value })
+              }
+            />
+
+            <small>
+              Ми перевіряємо, чи існує користувач із такою електронною адресою.
+            </small>
+
+            <label>Оцінка</label>
+            <select
+              value={reviewForm.rating}
+              onChange={(e) =>
+                setReviewForm({
+                  ...reviewForm,
+                  rating: Number(e.target.value),
+                })
+              }
+            >
+              <option value={5}>★★★★★ 5</option>
+              <option value={4}>★★★★ 4</option>
+              <option value={3}>★★★ 3</option>
+              <option value={2}>★★ 2</option>
+              <option value={1}>★ 1</option>
+            </select>
+
+            <label>Ваш відгук</label>
+            <textarea
+              placeholder="Напишіть свій відгук..."
+              value={reviewForm.text}
+              onChange={(e) =>
+                setReviewForm({ ...reviewForm, text: e.target.value })
+              }
+            />
+
+            <button type="submit" disabled={reviewLoading}>
+              {reviewLoading ? "Надсилання..." : "Надіслати відгук"}
+            </button>
+
+            {reviewMessage && (
+              <p className="review-message">{reviewMessage}</p>
+            )}
+          </form>
+
+          {reviews.length === 0 ? (
+            <div className="empty-reviews">
+              <div className="empty-icon">❝</div>
+              <h3>Тут поки немає відгуків</h3>
+              <p>Будьте першим, хто залишить відгук!</p>
+            </div>
+          ) : (
+            <div className="reviews-grid">
+              {reviews.map((review) => (
+                <article className="review-card" key={review.id}>
+                  <div className="quote-mark">“</div>
+
+                  <div className="review-rating">
+                    {"★".repeat(review.rating)}
+                    {"☆".repeat(5 - review.rating)}
                   </div>
-                </div>
-              </article>
-            ))}
-          </div>
+
+                  <p>{review.text}</p>
+
+                  <div className="review-author">
+                    <div className="avatar">
+                      {review.name
+                        ? review.name.charAt(0).toUpperCase()
+                        : review.email.charAt(0).toUpperCase()}
+                    </div>
+
+                    <div>
+                      <h4>{review.name || review.email}</h4>
+                      <span>користувач платформи</span>
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+          )}
         </section>
 
         <section className="start-section" id="start">

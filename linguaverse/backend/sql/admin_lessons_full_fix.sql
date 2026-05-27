@@ -1,0 +1,33 @@
+ALTER TABLE lessons
+ADD COLUMN IF NOT EXISTS tags TEXT DEFAULT '';
+
+ALTER TABLE lessons
+ADD COLUMN IF NOT EXISTS exercises JSONB DEFAULT '[]'::jsonb;
+
+ALTER TABLE lessons
+ADD COLUMN IF NOT EXISTS vocabulary JSONB DEFAULT '[]'::jsonb;
+
+ALTER TABLE lessons
+ADD COLUMN IF NOT EXISTS quiz JSONB DEFAULT '{}'::jsonb;
+
+ALTER TABLE lessons
+ADD COLUMN IF NOT EXISTS notes TEXT DEFAULT '';
+
+ALTER TABLE lessons
+ADD COLUMN IF NOT EXISTS xp INTEGER DEFAULT 20;
+
+ALTER TABLE lessons
+ADD COLUMN IF NOT EXISTS progress INTEGER DEFAULT 0;
+
+CREATE SEQUENCE IF NOT EXISTS lessons_id_seq;
+
+SELECT setval(
+  'lessons_id_seq',
+  COALESCE((SELECT MAX(id) FROM lessons), 0) + 1,
+  false
+);
+
+ALTER TABLE lessons
+ALTER COLUMN id SET DEFAULT nextval('lessons_id_seq');
+
+ALTER SEQUENCE lessons_id_seq OWNED BY lessons.id;

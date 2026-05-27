@@ -26,7 +26,7 @@
   text-align: center;
   backdrop-filter: blur(12px);
   position: relative;
-  overflow: hidden;
+  overflow: visible !important;
 }
 
 .auth-box::before {
@@ -108,18 +108,69 @@
   transform: translateY(-1px);
 }
 
-.password-rules {
-  text-align: left;
-  padding: 14px;
-  border-radius: 18px;
-  background: rgba(220, 235, 229, 0.48);
-  border: 1px solid rgba(0, 77, 77, 0.1);
+.auth-form input.input-error {
+  border-color: rgba(192, 57, 43, 0.42);
+  box-shadow:
+    0 0 0 4px rgba(192, 57, 43, 0.08),
+    0 10px 22px rgba(0, 77, 77, 0.06);
 }
 
-.password-rules p {
-  margin: 0 0 10px;
+.password-field {
+  position: relative;
+  width: 100%;
+}
+
+.password-field input {
+  width: 100%;
+}
+
+.password-popover {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(100% + 10px);
+  z-index: 9999;
+
+  text-align: left;
+  padding: 18px;
+
+  border-radius: 22px;
+
+  background: #ffffff;
+  /* головне виправлення */
+
+  opacity: 1;
+
+  border: 2px solid #d8e7e1;
+
+  box-shadow:
+    0 25px 60px rgba(0, 77, 77, 0.18),
+    0 10px 25px rgba(0, 77, 77, 0.08);
+
+  backdrop-filter: none;
+}
+.password-field {
+  position: relative;
+  z-index: 1000;
+}
+
+.password-popover::before {
+  content: "";
+  position: absolute;
+  top: -7px;
+  left: 28px;
+  width: 14px;
+  height: 14px;
+  background: rgba(255, 253, 248, 0.98);
+  border-left: 1px solid rgba(0, 77, 77, 0.16);
+  border-top: 1px solid rgba(0, 77, 77, 0.16);
+  transform: rotate(45deg);
+}
+
+.password-popover p {
+  margin: 0 0 9px;
   color: #004d4d;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 800;
 }
 
@@ -134,24 +185,27 @@
 }
 
 .password-rule span {
-  width: 20px;
-  height: 20px;
+  width: 19px;
+  height: 19px;
   border-radius: 50%;
   display: inline-grid;
   place-items: center;
-  background: rgba(255, 253, 248, 0.7);
-  color: #6f827f;
+  background: rgba(220, 235, 229, 0.7);
+  color: #004d4d;
   font-weight: 900;
   font-size: 12px;
 }
 
-.password-rule.valid {
+.password-ok {
+  margin: -4px 0 0;
+  text-align: left;
   color: #006766;
-}
-
-.password-rule.valid span {
-  background: #004d4d;
-  color: #fffdf8;
+  font-size: 13px;
+  font-weight: 800;
+  background: rgba(0, 103, 102, 0.08);
+  border: 1px solid rgba(0, 103, 102, 0.12);
+  padding: 10px 14px;
+  border-radius: 14px;
 }
 
 .auth-form button {
@@ -219,6 +273,18 @@
   text-decoration: underline;
 }
 
+@keyframes passwordHintIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @media (max-width: 600px) {
   .auth-container {
     padding: 18px;
@@ -232,4 +298,28 @@
   .auth-box h2 {
     font-size: 2.3rem;
   }
+
+  .password-popover {
+    position: static;
+    margin-top: 10px;
+  }
+
+  .password-popover::before {
+    display: none;
+  }
+
+    .password-popover {
+      background: #fffdf8 !important;
+      z-index: 99999 !important;
+    }
+  
+    .password-field {
+      position: relative;
+      z-index: 99999 !important;
+    }
+  
+    .switch-text {
+      z-index: 1 !important;
+    }
 }
+

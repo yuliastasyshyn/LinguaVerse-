@@ -9,11 +9,13 @@ import {
 
 const router = express.Router();
 
-router.get("/", getDictionaryWords);
-router.post("/", addDictionaryWord);
-router.delete("/:id", deleteDictionaryWord);
 
 router.post("/collections", createDictionaryCollection);
 router.delete("/collections/:id", deleteDictionaryCollection);
+
+
+router.get("/", getDictionaryWords);
+router.post("/", addDictionaryWord);
+router.delete("/:id", deleteDictionaryWord);
 
 export default router;

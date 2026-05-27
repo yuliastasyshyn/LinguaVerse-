@@ -36,11 +36,11 @@ export default function Login() {
         return;
       }
 
-      // ✔ Save token + user
+     
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
 
-      // ✔ Redirect to homepage
+    
       navigate("/home");
 
     } catch (err) {
@@ -53,13 +53,13 @@ export default function Login() {
   return (
     <div className="auth-container">
       <div className="auth-box">
-        <h2>Sign In</h2>
+        <h2>Увійти</h2>
 
         <form className="auth-form" onSubmit={handleLogin}>
 
           <input
             type="email"
-            placeholder="Email"
+            placeholder="Електронна пошта"
             value={email}
             autoComplete="email"
             onChange={(e) => setEmail(e.target.value)}
@@ -67,7 +67,7 @@ export default function Login() {
 
           <input
             type="password"
-            placeholder="Password"
+            placeholder="Пароль"
             value={password}
             autoComplete="current-password"
             onChange={(e) => setPassword(e.target.value)}
@@ -76,12 +76,12 @@ export default function Login() {
           {error && <p className="error">{error}</p>}
 
           <button type="submit" disabled={loading}>
-            {loading ? "Loading..." : "Login"}
+            {loading ? "Loading..." : "Увійти"}
           </button>
         </form>
 
         <p className="switch-text" onClick={() => navigate("/register")}>
-          Don't have an account? <span>Create one</span>
+          Не маєте акаунту? <span>Зареєструватися</span>
         </p>
       </div>
     </div>

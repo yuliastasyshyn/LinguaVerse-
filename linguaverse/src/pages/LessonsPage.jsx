@@ -1,6 +1,7 @@
 import React, { useMemo, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./LessonsPage.css";
+import { useTranslation } from "../i18n.jsx";
 
 const lessonsData = [
   {
@@ -93,11 +94,7 @@ const lessonsData = [
   },
 ];
 
-const statusMap = {
-  completed: "Завершено",
-  in_progress: "В процесі",
-  not_started: "Не почато",
-};
+
 
 const standardFlashcards = [
   { front: "Hello", back: "Привіт" },
@@ -120,8 +117,15 @@ export default function LessonsPage() {
   const [newBack, setNewBack] = useState("");
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
+  const { t } = useTranslation();
 
-  // Завантажити уроки при монтуванні компонента
+  const statusMap = {
+    completed: t("lessons.status.completed"),
+    in_progress: t("lessons.status.in_progress"),
+    not_started: t("lessons.status.not_started"),
+  };
+
+  
   useEffect(() => {
     fetchLessons();
     fetchStatistics();
@@ -160,7 +164,7 @@ export default function LessonsPage() {
       setLessons(data);
     } catch (error) {
       console.error("Error fetching lessons:", error);
-      // Fallback на локальні дані якщо бекенд недоступний
+     
       setLessons(lessonsData);
     } finally {
       setLoading(false);
@@ -194,11 +198,11 @@ export default function LessonsPage() {
     ? Math.round(lessons.reduce((sum, lesson) => sum + lesson.progress, 0) / totalLessons)
     : 0;
 
-  // Функція для запуску урока
+  
   const handleLessonClick = async (lesson) => {
     try {
       if (lesson.status === "not_started") {
-        // Стартуємо новий урок
+      
         const response = await fetch(`http://localhost:4000/api/lessons/${lesson.id}/start`, {
           method: "POST",
           headers: {
@@ -210,11 +214,11 @@ export default function LessonsPage() {
           setLessons(lessons.map((l) => (l.id === updatedLesson.id ? updatedLesson : l)));
         }
       }
-      // Переходимо на сторінку уроку
+    
       navigate(`/lessons/${lesson.id}`);
     } catch (error) {
       console.error("Error updating lesson:", error);
-      // Все одно переходимо на урок
+    
       navigate(`/lessons/${lesson.id}`);
     }
   };
@@ -278,13 +282,13 @@ export default function LessonsPage() {
   const currentFlashcard = standardFlashcards[flashcardIndex];
 
   if (loading) {
-    return <div className="lessons-page"><p>Завантаження уроків...</p></div>;
+    return <div className="lessons-page"><p>{t("lessons.loading")}</p></div>;
   }
 
   const renderButtonText = (status) => {
-    if (status === "completed") return "Повторити";
-    if (status === "in_progress") return "Продовжити";
-    return "Почати";
+    if (status === "completed") return t("lessons.button.repeat");
+    if (status === "in_progress") return t("lessons.button.continue");
+    return t("lessons.button.start");
   };
 
   return (
@@ -307,8 +311,8 @@ export default function LessonsPage() {
             </svg>
           </div>
           <div>
-            <h1>Уроки</h1>
-            <p>Оберіть урок та продовжуйте навчання у власному темпі</p>
+            <h1>{t("lessons.title")}</h1>
+            <p>{t("lessons.subtitle")}</p>
           </div>
         </div>
       </section>
@@ -316,11 +320,11 @@ export default function LessonsPage() {
       <section className="lessons-overview-card">
         <div className="overview-top">
           <div>
-            <h2>Ваш прогрес у курсі</h2>
-            <p>Ви вже пройшли частину курсу та можете продовжити навчання</p>
+            <h2>{t("lessons.progressTitle")}</h2>
+            <p>{t("lessons.progressSubtitle")}</p>
           </div>
           <div className="overview-badge">
-            <span>{stats?.completedLessons || completedLessons}/{stats?.totalLessons || totalLessons} уроків</span>
+            <span>{stats?.completedLessons || completedLessons}/{stats?.totalLessons || totalLessons} {t("lessons.lessonsLabel")}</span>
           </div>
         </div>
 
@@ -333,15 +337,15 @@ export default function LessonsPage() {
 
         <div className="overview-stats">
           <div className="overview-mini-card">
-            <span className="overview-label">Завершено</span>
+            <span className="overview-label">{t("lessons.completedLabel")}</span>
             <strong>{stats?.completedLessons || completedLessons}</strong>
           </div>
           <div className="overview-mini-card">
-            <span className="overview-label">В процесі</span>
+            <span className="overview-label">{t("lessons.inProgressLabel")}</span>
             <strong>{stats?.inProgressLessons || inProgressLessons}</strong>
           </div>
           <div className="overview-mini-card">
-            <span className="overview-label">Прогрес курсу</span>
+            <span className="overview-label">{t("lessons.courseProgressLabel")}</span>
             <strong>{stats?.totalProgress || totalProgress}%</strong>
           </div>
         </div>
@@ -352,25 +356,25 @@ export default function LessonsPage() {
           className={`filter-btn ${activeFilter === "all" ? "active" : ""}`}
           onClick={() => setActiveFilter("all")}
         >
-          Всі
+          {t("lessons.filter.all")}
         </button>
         <button
           className={`filter-btn ${activeFilter === "completed" ? "active" : ""}`}
           onClick={() => setActiveFilter("completed")}
         >
-          Завершені
+          {t("lessons.filter.completed")}
         </button>
         <button
           className={`filter-btn ${activeFilter === "in_progress" ? "active" : ""}`}
           onClick={() => setActiveFilter("in_progress")}
         >
-          В процесі
+          {t("lessons.filter.in_progress")}
         </button>
         <button
           className={`filter-btn ${activeFilter === "not_started" ? "active" : ""}`}
           onClick={() => setActiveFilter("not_started")}
         >
-          Не початі
+          {t("lessons.filter.not_started")}
         </button>
       </section>
 
@@ -380,14 +384,14 @@ export default function LessonsPage() {
           className={`path-tab ${activePath === "standard" ? "active" : ""}`}
           onClick={() => setActivePath("standard")}
         >
-          Стандартний шлях
+          {t("lessons.path.standard")}
         </button>
         <button
           type="button"
           className={`path-tab ${activePath === "custom" ? "active" : ""}`}
           onClick={() => setActivePath("custom")}
         >
-          Власні слова
+          {t("lessons.path.custom")}
         </button>
       </section>
 
@@ -396,15 +400,15 @@ export default function LessonsPage() {
           <section className="flashcard-showcase">
             <div className="flashcard-header">
               <div>
-                <h2>Ротаційні картки</h2>
-                <p>Натисніть на картку, щоб побачити переклад, або переходьте до наступного слова.</p>
+                    <h2>{t("lessons.flashcardsTitle")}</h2>
+                    <p>{t("lessons.flashcardsDesc")}</p>
               </div>
               <div className="flashcard-controls">
                 <button type="button" className="control-btn" onClick={handleFlip}>
-                  Перевернути
+                  {t("lessons.flipBtn")}
                 </button>
                 <button type="button" className="control-btn" onClick={handleNextCard}>
-                  Наступна картка
+                  {t("lessons.nextCardBtn")}
                 </button>
               </div>
             </div>
@@ -453,22 +457,22 @@ export default function LessonsPage() {
 
                 <div className="lesson-info-row">
                   <div className="lesson-info-item">
-                    <span className="info-label">Тривалість</span>
+                    <span className="info-label">{t("lessons.durationLabel")}</span>
                     <strong>{lesson.duration}</strong>
                   </div>
                   <div className="lesson-info-item">
-                    <span className="info-label">XP</span>
+                    <span className="info-label">{t("lessons.xpLabel")}</span>
                     <strong>{lesson.xp}</strong>
                   </div>
                   <div className="lesson-info-item">
-                    <span className="info-label">Категорія</span>
+                    <span className="info-label">{t("lessons.categoryLabel")}</span>
                     <strong>{lesson.category}</strong>
                   </div>
                 </div>
 
                 <div className="lesson-progress-block">
                   <div className="lesson-progress-header">
-                    <span>Прогрес</span>
+                    <span>{t("lessons.progressLabel")}</span>
                     <span>{lesson.progress}%</span>
                   </div>
                   <div className="lesson-progress-bar">
@@ -479,7 +483,7 @@ export default function LessonsPage() {
                   </div>
                 </div>
 
-                <button
+                  <button
                   className={`lesson-action-btn lesson-action-btn--${lesson.status}`}
                   onClick={(e) => {
                     e.stopPropagation();
@@ -496,34 +500,34 @@ export default function LessonsPage() {
         <section className="custom-words-section">
           <div className="custom-words-header">
             <div>
-              <h2>Власна колода</h2>
-              <p>Додавайте свої слова для тренувань у окремому шляху.</p>
+              <h2>{t("lessons.customDeckTitle")}</h2>
+              <p>{t("lessons.customDeckDesc")}</p>
             </div>
           </div>
 
           <form className="custom-word-form" onSubmit={handleCustomSubmit}>
             <div className="form-row">
               <label>
-                Слово / фраза
+                {t("lessons.wordLabel")}
                 <input
                   type="text"
                   value={newFront}
                   onChange={(event) => setNewFront(event.target.value)}
-                  placeholder="Hello"
+                  placeholder={t("lessons.placeholderFront")}
                 />
               </label>
               <label>
-                Переклад
+                {t("lessons.translationLabel")}
                 <input
                   type="text"
                   value={newBack}
                   onChange={(event) => setNewBack(event.target.value)}
-                  placeholder="Привіт"
+                  placeholder={t("lessons.placeholderBack")}
                 />
               </label>
             </div>
             <button type="submit" className="add-word-btn">
-              Додати слово
+              {t("lessons.addWordBtn")}
             </button>
           </form>
 
@@ -541,14 +545,14 @@ export default function LessonsPage() {
                       className="remove-word-btn"
                       onClick={() => handleRemoveCustom(item.id)}
                     >
-                      Видалити
+                      {t("lessons.removeBtn")}
                     </button>
                   </div>
                 </div>
               ))}
             </div>
           ) : (
-            <p className="custom-empty">Ваша колода порожня. Додайте перше слово зверху.</p>
+            <p className="custom-empty">{t("lessons.customEmpty")}</p>
           )}
         </section>
       )}

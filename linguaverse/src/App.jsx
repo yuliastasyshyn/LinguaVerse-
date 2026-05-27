@@ -18,9 +18,21 @@ import PronunciationPage from "./pages/PronunciationPage.jsx";
 import WritingPage from "./pages/WritingPage.jsx";
 
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
+import ProtectedAdminRoute from "./components/ProtectedAdminRoute.jsx";
 import Layout from "./components/Layout.jsx";
 import ActivityTimer from "./components/ActivityTimer.jsx";
 import VideoRoomPage from "./pages/VideoRoomPage";
+import TranslatorPage from "./pages/TranslatorPage";
+import AdminDashboard from "./pages/Admin/AdminDashboard.jsx";
+import AdminUsers from "./pages/Admin/AdminUsers.jsx";
+import AdminLessons from "./pages/Admin/AdminLessons.jsx";
+import AdminChallenges from "./pages/Admin/AdminChallenges.jsx";
+import AdminRooms from "./pages/Admin/AdminRooms.jsx";
+import AdminReviews from "./pages/Admin/AdminReviews.jsx";
+import AdminReports from "./pages/Admin/AdminReports.jsx";
+import AdminSettings from "./pages/Admin/AdminSettings.jsx";
+
+
 
 import { ProgressProvider } from "./context/ProgressContext.jsx";
 
@@ -175,7 +187,112 @@ export default function App() {
               </Layout>
             </ProtectedRoute>
           }
+/>
+
+    
+<Route
+  path="/translator"
+  element={
+    <ProtectedRoute>
+      <Layout>
+        <TranslatorPage />
+      </Layout>
+    </ProtectedRoute>
+  }
+/>
+
+
+
+
+        <Route
+          path="/admin"
+          element={
+            <ProtectedAdminRoute>
+              <Layout>
+                <AdminDashboard />
+              </Layout>
+            </ProtectedAdminRoute>
+          }
         />
+
+        <Route
+          path="/admin/users"
+          element={
+            <ProtectedAdminRoute>
+              <Layout>
+                <AdminUsers />
+              </Layout>
+            </ProtectedAdminRoute>
+          }
+        />
+
+        <Route
+          path="/admin/lessons"
+          element={
+            <ProtectedAdminRoute>
+              <Layout>
+                <AdminLessons />
+              </Layout>
+            </ProtectedAdminRoute>
+          }
+        />
+
+        <Route
+          path="/admin/challenges"
+          element={
+            <ProtectedAdminRoute>
+              <Layout>
+                <AdminChallenges />
+              </Layout>
+            </ProtectedAdminRoute>
+          }
+        />
+
+        <Route
+          path="/admin/rooms"
+          element={
+            <ProtectedAdminRoute>
+              <Layout>
+                <AdminRooms />
+              </Layout>
+            </ProtectedAdminRoute>
+          }
+        />
+
+        <Route
+          path="/admin/reviews"
+          element={
+            <ProtectedAdminRoute>
+              <Layout>
+                <AdminReviews />
+              </Layout>
+            </ProtectedAdminRoute>
+          }
+        />
+
+        <Route
+          path="/admin/reports"
+          element={
+            <ProtectedAdminRoute>
+              <Layout>
+                <AdminReports />
+              </Layout>
+            </ProtectedAdminRoute>
+          }
+        />
+
+        <Route
+          path="/admin/settings"
+          element={
+            <ProtectedAdminRoute>
+              <Layout>
+                <AdminSettings />
+              </Layout>
+            </ProtectedAdminRoute>
+          }
+        />
+
+
         <Route
   path="/video-room/:roomId"
   element={

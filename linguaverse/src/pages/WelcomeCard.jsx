@@ -1,10 +1,14 @@
-export default function WelcomeCard(){return (<div className="card wide">Welcome</div>);}import "./Card.css";
+import { useTranslation } from "../i18n.jsx";
 
 export default function WelcomeCard({ user }) {
+  const { t } = useTranslation();
+
   return (
     <div className="card wide">
-      <h2>Welcome back, {user?.name}! 👋</h2>
-      <p>Keep up your amazing progress. You're doing great!</p>
+      <h2>
+        {t("home.welcome")} {user?.name || t("home.userFallback")} 👋
+      </h2>
+      <p>{t("home.subtitle")}</p>
     </div>
   );
 }
