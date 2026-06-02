@@ -1,183 +1,216 @@
-import fs from "fs-extra";
-import path from "path";
-import { fileURLToPath } from "url";
+import { pool } from "../db/index.js";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const lessonsFilePath = path.join(__dirname, "../lessons.json");
-const dictionaryFilePath = path.join(__dirname, "../dictionary.json");
-
-const loadLessons = async () => {
-  try {
-    const data = await fs.readFile(lessonsFilePath, "utf-8");
-    return JSON.parse(data);
-  } catch (error) {
-    console.error("Error reading lessons file:", error);
-    return [];
-  }
+const getUserId = (req) => {
+  return req.user?.id || req.user?.userId || req.user?.user_id || null;
 };
 
-const loadDictionary = async () => {
-  try {
-    const data = await fs.readFile(dictionaryFilePath, "utf-8");
-    const parsed = JSON.parse(data);
+const parseVocabulary = (vocabulary) => {
+  if (!vocabulary) return [];
 
-    return {
-      customWords: Array.isArray(parsed.customWords) ? parsed.customWords : [],
-      collections: Array.isArray(parsed.collections) ? parsed.collections : [],
-    };
-  } catch (error) {
-    console.error("Error reading dictionary file:", error);
-    return { customWords: [], collections: [] };
-  }
-};
+  if (Array.isArray(vocabulary)) {
+    return vocabulary
+      .map((item) => {
+        if (typeof item === "string") return item;
 
-const saveDictionary = async (dictionary) => {
-  try {
-    await fs.writeFile(dictionaryFilePath, JSON.stringify(dictionary, null, 2));
-  } catch (error) {
-    console.error("Error saving dictionary file:", error);
+        if (item && typeof item === "object") {
+          return item.word || item.text || item.value || "";
+        }
+
+        return "";
+      })
+      .filter(Boolean);
   }
+
+  if (typeof vocabulary === "string") {
+    try {
+      const parsed = JSON.parse(vocabulary);
+
+      if (Array.isArray(parsed)) {
+        return parsed
+          .map((item) => {
+            if (typeof item === "string") return item;
+
+            if (item && typeof item === "object") {
+              return item.word || item.text || item.value || "";
+            }
+
+            return "";
+          })
+          .filter(Boolean);
+      }
+
+      return [];
+    } catch {
+      return vocabulary
+        .split(/[,;\n]/)
+        .map((word) => word.trim())
+        .filter(Boolean);
+    }
+  }
+
+  return [];
 };
 
 export const getDictionaryWords = async (req, res) => {
   try {
-    const lessons = await loadLessons();
-    const dictionary = await loadDictionary();
+    const userId = getUserId(req);
+
+    if (!userId) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    const lessonsResult = await pool.query(`
+      SELECT vocabulary
+      FROM lessons
+      WHERE vocabulary IS NOT NULL
+    `);
 
     const lessonWords = Array.from(
-      new Set(lessons.flatMap((lesson) => lesson.vocabularyTips || []))
+      new Set(
+        lessonsResult.rows.flatMap((lesson) =>
+          parseVocabulary(lesson.vocabulary)
+        )
+      )
+    );
+
+    const dictionaryResult = await pool.query(
+      `
+      SELECT 
+        id,
+        user_id,
+        word,
+        translation,
+        created_at AS "addedAt"
+      FROM dictionary_words
+      WHERE user_id = $1
+      ORDER BY created_at DESC
+      `,
+      [userId]
     );
 
     res.status(200).json({
       lessonWords,
-      customWords: dictionary.customWords,
-      collections: dictionary.collections,
+      customWords: dictionaryResult.rows,
+      collections: []
     });
   } catch (error) {
-    console.error(error);
+    console.error("Error loading dictionary:", error);
     res.status(500).json({ error: "Failed to load dictionary" });
   }
 };
 
 export const addDictionaryWord = async (req, res) => {
   try {
-    const { word, translation, collectionId, rating, context } = req.body;
+    const userId = getUserId(req);
+    const { word, translation } = req.body;
+
+    if (!userId) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
 
     if (!word || !translation) {
-      return res.status(400).json({ error: "Word and translation are required" });
+      return res.status(400).json({
+        error: "Word and translation are required"
+      });
     }
 
-    const dictionary = await loadDictionary();
     const normalizedWord = word.trim();
     const normalizedTranslation = translation.trim();
-    const normalizedCollectionId = collectionId ? Number(collectionId) : null;
-    const wordRating = rating ? Math.min(Math.max(Number(rating), 1), 5) : 5;
 
     if (!normalizedWord || !normalizedTranslation) {
-      return res.status(400).json({ error: "Word and translation cannot be empty" });
+      return res.status(400).json({
+        error: "Word and translation cannot be empty"
+      });
     }
 
-    if (
-      normalizedCollectionId &&
-      !dictionary.collections.some((collection) => Number(collection.id) === normalizedCollectionId)
-    ) {
-      return res.status(404).json({ error: "Collection not found" });
-    }
+    const result = await pool.query(
+      `
+      INSERT INTO dictionary_words (user_id, word, translation)
+      VALUES ($1, $2, $3)
+      RETURNING 
+        id,
+        user_id,
+        word,
+        translation,
+        created_at AS "addedAt"
+      `,
+      [userId, normalizedWord, normalizedTranslation]
+    );
 
-    const newWord = {
-      id: Date.now(),
-      word: normalizedWord,
-      translation: normalizedTranslation,
-      collectionId: normalizedCollectionId,
-      rating: wordRating,
-      context: context || "",
-      addedAt: new Date().toISOString(),
-    };
+    const dictionaryResult = await pool.query(
+      `
+      SELECT 
+        id,
+        user_id,
+        word,
+        translation,
+        created_at AS "addedAt"
+      FROM dictionary_words
+      WHERE user_id = $1
+      ORDER BY created_at DESC
+      `,
+      [userId]
+    );
 
-    dictionary.customWords = [...dictionary.customWords, newWord];
-    await saveDictionary(dictionary);
-
-    res.status(201).json({ word: newWord, customWords: dictionary.customWords });
+    res.status(201).json({
+      word: result.rows[0],
+      customWords: dictionaryResult.rows
+    });
   } catch (error) {
-    console.error(error);
+    console.error("Error adding dictionary word:", error);
     res.status(500).json({ error: "Failed to add custom word" });
   }
 };
 
 export const deleteDictionaryWord = async (req, res) => {
   try {
+    const userId = getUserId(req);
     const { id } = req.params;
-    const dictionary = await loadDictionary();
 
-    dictionary.customWords = dictionary.customWords.filter(
-      (word) => String(word.id) !== String(id)
+    if (!userId) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    await pool.query(
+      `
+      DELETE FROM dictionary_words
+      WHERE id = $1 AND user_id = $2
+      `,
+      [id, userId]
     );
 
-    await saveDictionary(dictionary);
+    const dictionaryResult = await pool.query(
+      `
+      SELECT 
+        id,
+        user_id,
+        word,
+        translation,
+        created_at AS "addedAt"
+      FROM dictionary_words
+      WHERE user_id = $1
+      ORDER BY created_at DESC
+      `,
+      [userId]
+    );
 
-    res.status(200).json({ customWords: dictionary.customWords });
+    res.status(200).json({
+      customWords: dictionaryResult.rows
+    });
   } catch (error) {
-    console.error(error);
+    console.error("Error deleting dictionary word:", error);
     res.status(500).json({ error: "Failed to delete custom word" });
   }
 };
 
 export const createDictionaryCollection = async (req, res) => {
-  try {
-    const { name } = req.body;
-    const normalizedName = name?.trim();
-
-    if (!normalizedName) {
-      return res.status(400).json({ error: "Collection name is required" });
-    }
-
-    const dictionary = await loadDictionary();
-    const alreadyExists = dictionary.collections.some(
-      (collection) => collection.name.toLowerCase() === normalizedName.toLowerCase()
-    );
-
-    if (alreadyExists) {
-      return res.status(409).json({ error: "Collection already exists" });
-    }
-
-    const newCollection = {
-      id: Date.now(),
-      name: normalizedName,
-      createdAt: new Date().toISOString(),
-    };
-
-    dictionary.collections = [...dictionary.collections, newCollection];
-    await saveDictionary(dictionary);
-
-    res.status(201).json({ collection: newCollection, collections: dictionary.collections });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Failed to create collection" });
-  }
+  res.status(501).json({
+    error: "Collections are not implemented in database"
+  });
 };
 
 export const deleteDictionaryCollection = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const dictionary = await loadDictionary();
-
-    dictionary.collections = dictionary.collections.filter(
-      (collection) => String(collection.id) !== String(id)
-    );
-
-    dictionary.customWords = dictionary.customWords.map((word) =>
-      String(word.collectionId) === String(id) ? { ...word, collectionId: null } : word
-    );
-
-    await saveDictionary(dictionary);
-
-    res.status(200).json({
-      collections: dictionary.collections,
-      customWords: dictionary.customWords,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Failed to delete collection" });
-  }
+  res.status(501).json({
+    error: "Collections are not implemented in database"
+  });
 };

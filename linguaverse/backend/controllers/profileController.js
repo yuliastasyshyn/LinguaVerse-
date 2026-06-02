@@ -7,11 +7,10 @@ function calculateLevel(xp) {
   return "A1";
 }
 
-
 const ensureUserSettingsTable = async () => {
   await pool.query(
     `CREATE TABLE IF NOT EXISTS user_settings (
-      user_id INTEGER PRIMARY KEY,
+      user_id INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
       native_language VARCHAR(50) DEFAULT 'uk',
       learning_language VARCHAR(50) DEFAULT 'en',
       daily_goal_xp INTEGER DEFAULT 100,
@@ -19,11 +18,16 @@ const ensureUserSettingsTable = async () => {
       achievements_enabled BOOLEAN DEFAULT true,
       public_profile BOOLEAN DEFAULT false,
       show_stats BOOLEAN DEFAULT true,
-      created_at TIMESTAMPTZ DEFAULT NOW()
+      created_at TIMESTAMPTZ DEFAULT NOW(),
+      updated_at TIMESTAMPTZ DEFAULT NOW()
     )`
   );
-};
 
+  await pool.query(
+    `ALTER TABLE user_settings 
+     ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT NOW()`
+  );
+};
 
 export const getProfile = async (req, res) => {
   try {

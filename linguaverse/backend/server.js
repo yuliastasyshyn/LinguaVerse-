@@ -38,7 +38,12 @@ dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const JWT_SECRET = process.env.JWT_SECRET || "super-secret-key";
+
+if (!process.env.JWT_SECRET) {
+  throw new Error("JWT_SECRET is required in .env");
+}
+
+const JWT_SECRET = process.env.JWT_SECRET;
 
 const app = express();
 const server = http.createServer(app);
@@ -77,10 +82,17 @@ app.use("/api/lessons", auth, lessonsRoutes);
 app.use("/api/dictionary", auth, dictionaryRoutes);
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/admin", adminRoutes);
-app.use(express.static(path.join(__dirname, "../dist")));
 
-app.use((req, res) => {
-  res.status(404).json({ message: "Route not found" });
+const distPath = path.join(__dirname, "../dist");
+
+app.use(express.static(distPath));
+
+app.get("*", (req, res, next) => {
+  if (req.path.startsWith("/api")) {
+    return res.status(404).json({ message: "API route not found" });
+  }
+
+  return res.sendFile(path.join(distPath, "index.html"));
 });
 
 app.use((err, req, res, next) => {

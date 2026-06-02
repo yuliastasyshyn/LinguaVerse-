@@ -1,11 +1,4 @@
-import fs from "fs-extra";
-import path from "path";
-import { fileURLToPath } from "url";
 import { pool } from "../db/index.js";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const lessonsFilePath = path.join(__dirname, "../lessons.json");
 
 const toSafeInt = (value, fallback = 0) => {
   const num = Number(value);
@@ -113,12 +106,18 @@ export const ensureProgressTables = async () => {
   );
 };
 
+
 const readLessons = async () => {
   try {
-    const file = await fs.readFile(lessonsFilePath, "utf-8");
-    return JSON.parse(file);
+    const result = await pool.query(`
+      SELECT id, title, progress
+      FROM lessons
+      ORDER BY id ASC
+    `);
+
+    return result.rows;
   } catch (err) {
-    console.error("Failed to read lessons file:", err);
+    console.error("Failed to read lessons from database:", err);
     return [];
   }
 };

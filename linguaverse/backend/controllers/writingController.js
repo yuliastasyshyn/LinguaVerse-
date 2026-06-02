@@ -228,13 +228,10 @@ Rules:
 - Scores must be integers from 1 to 10.
 - Give exactly 3 suggestions.
 - Keep feedback friendly and easy to understand.
-- improvedVersion should be a better version of the student's text.
+- improvedVersion should be a better version of the student's text(with improved grammar, vocabulary(with higher level) and style) but keep the original meaning.
 - Do not wrap JSON in markdown.
 - Focus only on English grammar, vocabulary, style, and clarity.
-
-Writing prompt:
-${prompt}
-
++
 Student answer:
 ${text}
     `.trim();

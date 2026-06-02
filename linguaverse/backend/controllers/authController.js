@@ -2,8 +2,13 @@ import { pool } from "../db/index.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
+import { ensureProgressTables } from "./progress.js";
 
-const JWT_SECRET = process.env.JWT_SECRET || "super-secret-key";
+if (!process.env.JWT_SECRET) {
+  throw new Error("JWT_SECRET is required in .env");
+}
+
+const JWT_SECRET = process.env.JWT_SECRET;
 
 const verificationStore = new Map();
 
@@ -160,6 +165,8 @@ export async function verifyRegistrationCode(req, res) {
 
     const user = result.rows[0];
 
+    await ensureProgressTables();
+    
     await pool.query(
       `INSERT INTO user_progress (user_id, xp, words, daily_minutes, active_days)
        VALUES ($1, 0, 0, 0, 0)`,
