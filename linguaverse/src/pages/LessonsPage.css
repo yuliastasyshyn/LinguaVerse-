@@ -1,4 +1,4 @@
-/* LessonsPage.css – у стилі RoomsPage, один стовпчик, без перекриття з сайдбаром */
+
 
 * {
     margin: 0;
@@ -8,18 +8,18 @@
 
 .lessons-page {
     max-width: 1000px;
-    /* обмежуємо ширину для кращого читання */
+    
     margin: 0 auto;
-    /* центруємо контент, але не заважає сайдбару */
+   
     padding: 32px 40px;
     background: #f8fafc;
-    /* єдиний фон з HomePage / RoomsPage */
+   
     min-height: 100vh;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     color: #0f172a;
 }
 
-/* Заголовок */
+
 .lessons-header {
     margin-bottom: 32px;
 }
@@ -61,7 +61,7 @@
     margin: 0;
 }
 
-/* Картка загального прогресу */
+
 .lessons-overview-card {
     background: #ffffff;
     border-radius: 24px;
@@ -145,7 +145,7 @@
     color: #0f172a;
 }
 
-/* Фільтри */
+
 .lessons-filters {
     display: flex;
     flex-wrap: wrap;
@@ -177,14 +177,14 @@
     box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
 }
 
-/* Сітка уроків – один стовпчик */
+
 .lessons-grid {
     display: flex;
     flex-direction: column;
     gap: 24px;
 }
 
-/* Картка уроку */
+
 .lesson-card {
     background: #ffffff;
     border-radius: 24px;
@@ -264,7 +264,7 @@
     margin: 0;
 }
 
-/* Інформація про урок (тривалість, XP, категорія) */
+
 .lesson-info-row {
     display: flex;
     gap: 24px;
@@ -291,7 +291,7 @@
     font-weight: 600;
 }
 
-/* Прогрес уроку */
+
 .lesson-progress-block {
     margin-bottom: 24px;
 }
@@ -317,7 +317,7 @@
     border-radius: 10px;
 }
 
-/* Кнопка дії */
+
 .lesson-action-btn {
     width: 100%;
     padding: 12px;
@@ -469,7 +469,7 @@
 }
 
 .flashcard-sample .flashcard-front {
-    background: linear-gradient(135deg, #667eea 0%, #006766 100%);
+    background: linear-gradient(135deg, #acc7d5 0%, #006766 100%);
     color: white;
 }
 
@@ -563,7 +563,7 @@
     font-size: 0.95rem;
 }
 
-/* Адаптивність */
+
 @media (max-width: 768px) {
     .lessons-page {
         padding: 24px 20px;

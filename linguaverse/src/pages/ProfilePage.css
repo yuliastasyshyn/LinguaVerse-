@@ -52,7 +52,7 @@
     color: #475569;
 }
 
-/* Hero картка */
+
 .profile-hero-card {
     display: flex;
     align-items: center;
@@ -97,7 +97,7 @@
     font-size: 1rem;
 }
 
-/* Статистика блоки */
+
 .profile-stats {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -129,7 +129,7 @@
     color: #006766;
 }
 
-/* Секції профілю */
+
 .profile-section {
     background: #ffffff;
     border: 1px solid #eef2f6;
@@ -172,7 +172,6 @@
     font-weight: 500;
 }
 
-/* Велика статистика сітка */
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -242,7 +241,7 @@
     color: #006766;
 }
 
-/* Загальні картки */
+
 .profile-card {
     background: #ffffff;
     border: 1px solid #eef2f6;
@@ -316,7 +315,7 @@
     cursor: not-allowed;
 }
 
-/* Сітка форм – виправлено переповнення */
+
 .profile-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -333,7 +332,7 @@
     flex-direction: column;
     gap: 8px;
     min-width: 0;
-    /* FIX: дозволяє тексту скорочуватись */
+    
 }
 
 .form-group label {
@@ -345,23 +344,23 @@
 .form-group input,
 .form-group select {
     width: 100%;
-    /* Замінюємо жорстку висоту на мінімальну для гнучкості */
+   
     min-height: 48px;
     border: 1px solid #e2e8f0;
     background: #ffffff;
     border-radius: 16px;
     padding: 8px 16px;
-    /* Додаємо вертикальні падінги для центрування */
+   
     font-size: 0.95rem;
     line-height: 1.5;
-    /* Забезпечує правильну висоту рядка тексту */
+   
     color: #0f172a;
     outline: none;
     transition: all 0.2s;
     box-sizing: border-box;
     display: block;
     appearance: none;
-    /* Прибираємо стандартний вигляд селекта в Safari/Chrome */
+    
 }
 
 .form-group select {
@@ -370,7 +369,7 @@
     background-position: right 16px center;
     background-size: 16px;
     padding-right: 40px;
-    /* Місце для стрілочки */
+    
 }
 
 .form-group input:focus,
@@ -391,7 +390,7 @@
     margin-bottom: 20px;
 }
 
-/* Перемикачі */
+
 .toggle-list {
     display: flex;
     flex-direction: column;
@@ -409,7 +408,7 @@
 .toggle-info {
     flex: 1;
     min-width: 150px;
-    /* FIX: щоб не стискалось занадто */
+    
 }
 
 .toggle-info strong {
@@ -468,7 +467,7 @@
     transform: translateX(24px);
 }
 
-/* Статистика */
+
 .stats-card {
     background: #f8fafc;
     border: 1px solid #eef2f6;
@@ -523,7 +522,7 @@
     color: #475569;
 }
 
-/* Адаптивність */
+
 @media (max-width: 900px) {
 
     .profile-grid,

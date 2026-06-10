@@ -1,7 +1,9 @@
+import { pool } from "../db/index.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
-import { pool } from "../db/index.js";
+
+const JWT_SECRET = process.env.JWT_SECRET || "super-secret-key";
 
 const verificationStore = new Map();
 
@@ -21,16 +23,10 @@ function validatePassword(password = "") {
 
 function getTransporter() {
   return nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 587,
-    secure: false,
-    requireTLS: true,
+    service: "gmail",
     auth: {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS,
-    },
-    tls: {
-      rejectUnauthorized: false,
     },
   });
 }
@@ -92,9 +88,7 @@ export async function sendVerificationCode(req, res) {
         `,
       });
 
-      return res.json({
-        message: "Verification code sent",
-      });
+      return res.json({ message: "Verification code sent" });
     } catch (mailError) {
       console.error("Email sending failed, DEV CODE:", code);
       console.error("Mail error:", mailError.message);
@@ -110,7 +104,6 @@ export async function sendVerificationCode(req, res) {
   }
 }
 
-// це потрібно, бо authRoutes.js імпортує register
 export async function register(req, res) {
   return sendVerificationCode(req, res);
 }
@@ -156,61 +149,91 @@ export async function verifyRegistrationCode(req, res) {
       });
     }
 
-    const hashedPassword = await bcrypt.hash(pending.password, 10);
+    const hashed = bcrypt.hashSync(pending.password, 10);
 
     const result = await pool.query(
-      "INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING id, name, email",
-      [pending.name, pending.email, hashedPassword]
+      `INSERT INTO users (name, email, password, role)
+       VALUES ($1, $2, $3, 'user')
+       RETURNING id, name, email, role`,
+      [pending.name, pending.email, hashed]
+    );
+
+    const user = result.rows[0];
+
+    await pool.query(
+      `INSERT INTO user_progress (user_id, xp, words, daily_minutes, active_days)
+       VALUES ($1, 0, 0, 0, 0)`,
+      [user.id]
     );
 
     verificationStore.delete(email);
 
     return res.status(201).json({
-      message: "Account created successfully",
-      user: result.rows[0],
+      message: "User registered",
+      user,
     });
   } catch (err) {
     console.error("verifyRegistrationCode error:", err);
-    return res.status(500).json({ message: "Registration failed" });
+
+    if (err.code === "23505") {
+      return res.status(400).json({ message: "Email already exists" });
+    }
+
+    return res.status(500).json({
+      message: "Registration failed",
+      error: err.message,
+    });
   }
 }
 
-export async function login(req, res) {
-  try {
-    const { email, password } = req.body;
+export const login = async (req, res) => {
+  const { email, password } = req.body;
 
-    const result = await pool.query("SELECT * FROM users WHERE email = $1", [
-      email,
-    ]);
+  try {
+    const result = await pool.query(
+      "SELECT id, name, email, password, role FROM users WHERE email = $1",
+      [email]
+    );
 
     const user = result.rows[0];
 
     if (!user) {
-      return res.status(401).json({ message: "Invalid email or password" });
+      return res.status(400).json({ message: "User not found" });
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    const match = bcrypt.compareSync(password, user.password);
 
-    if (!isPasswordValid) {
-      return res.status(401).json({ message: "Invalid email or password" });
+    if (!match) {
+      return res.status(400).json({ message: "Wrong password" });
     }
+
+    const role = user.role || "user";
 
     const token = jwt.sign(
-      { id: user.id, email: user.email },
-      process.env.JWT_SECRET || "secret",
+      {
+        id: user.id,
+        email: user.email,
+        role: role,
+      },
+      JWT_SECRET,
       { expiresIn: "7d" }
     );
 
     return res.json({
+      message: "Login successful",
       token,
       user: {
         id: user.id,
         name: user.name,
         email: user.email,
+        role: role,
       },
     });
   } catch (err) {
     console.error("login error:", err);
-    return res.status(500).json({ message: "Login failed" });
+    return res.status(500).json({
+      message: "Server error",
+      error: err.message,
+    });
   }
-}
+};

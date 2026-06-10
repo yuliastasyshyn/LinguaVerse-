@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { useProgress } from "../context/ProgressContext.jsx";
+import { useTranslation } from "../i18n.jsx";
 import "./ChallengesPage.css";
 
 const accentClassMap = {
@@ -12,6 +13,7 @@ const accentClassMap = {
 
 export default function ChallengesPage() {
   const { challengesData, loading, error, refreshAll } = useProgress();
+  const { translatePhrase } = useTranslation();
 
   const completedChallenges = useMemo(() => {
     return challengesData?.challenges?.filter((item) => item.completed) || [];
@@ -61,8 +63,8 @@ export default function ChallengesPage() {
           <article key={challenge.key} className={`challenge-page-card ${accentClassMap[challenge.accent] || ""}`}>
             <div className="challenge-page-card-top">
               <div>
-                <h3>{challenge.title}</h3>
-                <p>{challenge.description}</p>
+                <h3>{translatePhrase(challenge.title)}</h3>
+                <p>{translatePhrase(challenge.description)}</p>
               </div>
               <div className="challenge-page-percent">{challenge.progress}%</div>
             </div>
@@ -72,7 +74,7 @@ export default function ChallengesPage() {
             </div>
 
             <div className="challenge-page-meta">
-              <span>{challenge.progressLabel}</span>
+              <span>{translatePhrase(challenge.progressLabel)}</span>
               <span>+{challenge.rewardXp} XP</span>
             </div>
           </article>
@@ -89,7 +91,7 @@ export default function ChallengesPage() {
           <div className="completed-grid">
             {completedChallenges.map((item) => (
               <div key={`${item.key}-done`} className="completed-item">
-                <strong>{item.title}</strong>
+                <strong>{translatePhrase(item.title)}</strong>
                 <span>Нагорода: +{item.rewardXp} XP</span>
               </div>
             ))}

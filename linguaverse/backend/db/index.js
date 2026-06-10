@@ -1,10 +1,14 @@
+import dotenv from "dotenv";
 import pkg from "pg";
+
+dotenv.config();
+
 const { Pool } = pkg;
 
 export const pool = new Pool({
-  user: "postgres",      // ← твій логін PostgreSQL
-  password: "090705",      // ← твій пароль PostgreSQL
-  host: "localhost",
-  port: 5432,
-  database: "linguaverse" // ← НАЗВА твого database у pgAdmin
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  host: process.env.DB_HOST,
+  port: Number(process.env.DB_PORT) || 5432,
+  database: process.env.DB_NAME,
 });

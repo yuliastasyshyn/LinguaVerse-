@@ -1,0 +1,273 @@
+css .translator-page {
+    min-height: 100vh;
+    width: 100%;
+    padding: 40px;
+    background: linear-gradient(135deg,
+            #f4f7f5 0%,
+            #eef5f2 50%,
+            #f8faf9 100%);
+
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.translator-card {
+    width: 100%;
+    max-width: 1200px;
+
+    background: rgba(255, 255, 255, 0.75);
+
+    border: 1px solid rgba(0, 91, 87, 0.1);
+
+    backdrop-filter: blur(12px);
+
+    border-radius: 34px;
+
+    padding: 40px;
+
+    box-shadow:
+        0 10px 30px rgba(0, 91, 87, 0.08),
+        0 0 0 1px rgba(255, 255, 255, 0.5);
+}
+
+.translator-card h1 {
+    font-size: 48px;
+    margin-bottom: 35px;
+    color: #005b57;
+    font-weight: 800;
+}
+
+.language-row {
+    display: flex;
+    gap: 25px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+}
+
+.language-row div {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.language-row label {
+    font-size: 15px;
+    font-weight: 700;
+    color: #174b48;
+}
+
+.language-row select {
+    padding: 14px 18px;
+    border-radius: 16px;
+    border: 1px solid #c9d9d5;
+    background: white;
+    font-size: 16px;
+    color: #174b48;
+    outline: none;
+    transition: 0.2s;
+}
+
+.language-row select:focus {
+    border-color: #00897b;
+    box-shadow: 0 0 0 4px rgba(0, 137, 123, 0.12);
+}
+
+.translator-boxes {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+    margin-bottom: 30px;
+}
+
+.translator-boxes textarea {
+    min-height: 360px;
+
+    resize: none;
+
+    border-radius: 26px;
+
+    border: 1px solid #d7e3df;
+
+    background: rgba(255, 255, 255, 0.85);
+
+    padding: 24px;
+
+    font-size: 20px;
+
+    line-height: 1.7;
+
+    outline: none;
+
+    transition: 0.25s;
+
+    color: #173c3a;
+}
+
+.translator-boxes textarea::placeholder {
+    color: #8aa4a1;
+}
+
+.translator-boxes textarea:focus {
+    border-color: #00897b;
+
+    box-shadow:
+        0 0 0 5px rgba(0, 137, 123, 0.12),
+        0 10px 25px rgba(0, 91, 87, 0.06);
+}
+
+.translation-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.examples-box {
+    background: linear-gradient(135deg, rgba(0, 137, 123, 0.08), rgba(0, 169, 132, 0.05));
+    border: 1px solid rgba(0, 137, 123, 0.2);
+    border-radius: 20px;
+    padding: 18px;
+    flex: 1;
+    max-height: 280px;
+    overflow-y: auto;
+    animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.examples-box h3 {
+    margin: 0 0 12px 0;
+    font-size: 14px;
+    font-weight: 700;
+    color: #00695c;
+    letter-spacing: 0.5px;
+}
+
+.examples-content {
+    font-size: 13px;
+    line-height: 1.8;
+    color: #174b48;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.translator-card button {
+    background: linear-gradient(135deg,
+            #00695c 0%,
+            #004d40 100%);
+
+    color: white;
+
+    border: none;
+
+    padding: 17px 34px;
+
+    border-radius: 18px;
+
+    font-size: 18px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition: 0.25s;
+
+    box-shadow:
+        0 10px 20px rgba(0, 77, 64, 0.18);
+}
+
+.translator-card button:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 15px 30px rgba(0, 77, 64, 0.25);
+}
+
+.translator-card button:active {
+    transform: scale(0.98);
+}
+
+.button-group {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+}
+
+.btn-translate {
+    flex: 1;
+    min-width: 200px;
+}
+
+.btn-add-dict {
+    background: linear-gradient(135deg, #ffc107, #ffb300);
+    color: #333;
+    min-width: 180px;
+}
+
+.btn-add-dict:hover {
+    background: linear-gradient(135deg, #ffb300, #ffa000);
+}
+
+.message {
+    padding: 14px 18px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    text-align: center;
+}
+
+.message.success {
+    background: rgba(76, 175, 80, 0.15);
+    color: #2e7d32;
+    border: 1px solid rgba(76, 175, 80, 0.3);
+}
+
+.message.error {
+    background: rgba(244, 67, 54, 0.15);
+    color: #c62828;
+    border: 1px solid rgba(244, 67, 54, 0.3);
+}
+
+@media (max-width: 950px) {
+    .translator-boxes {
+        grid-template-columns: 1fr;
+    }
+
+    .translator-card {
+        padding: 25px;
+    }
+
+    .translator-card h1 {
+        font-size: 36px;
+    }
+
+    .translator-boxes textarea {
+        min-height: 250px;
+    }
+
+    .button-group {
+        flex-direction: column;
+    }
+
+    .btn-add-dict {
+        width: 100%;
+    }
+
+    .examples-box {
+        max-height: 200px;
+    }
+
+    .examples-content {
+        font-size: 12px;
+    }
+}
