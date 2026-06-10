@@ -2,8 +2,6 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom";
 import { io } from "socket.io-client";
 import "./ChatPage.css";
-
-import { Bot, BookOpen, PencilLine, BookText } from "lucide-react";
 import { useTranslation } from "../i18n.jsx";
 
 const API_URL = "http://localhost:4000";
@@ -35,6 +33,83 @@ function formatTime(dateValue) {
   });
 }
 
+function isVocabularyRequest(text) {
+  return /нові слова|корисних слів|корисні слова|слова для|vocabulary|words|phrases|фрази/i.test(
+    String(text || "")
+  );
+}
+
+function buildUniqueVocabularyPrompt(text, aiMessages) {
+  const previousAiReplies = aiMessages
+    .filter((message) => message.role === "assistant")
+    .slice(-6)
+    .map((message) => message.text)
+    .join("\n\n");
+
+  const randomTopics = [
+    "робота і навчання",
+    "подорожі",
+    "спілкування з друзями",
+    "магазин і покупки",
+    "кафе та ресторани",
+    "емоції та думки",
+    "повсякденні ситуації",
+    "ділове спілкування",
+    "онлайн-листування",
+    "розмовна англійська",
+  ];
+
+  const randomTopic =
+    randomTopics[Math.floor(Math.random() * randomTopics.length)];
+
+  return `
+${text}
+
+ВАЖЛИВА ВИМОГА:
+Згенеруй повністю НОВИЙ набір слів або фраз.
+Не повторюй слова, які вже були у попередніх відповідях.
+Обери інші слова, інші приклади й іншу мінітему.
+Цього разу мінітема: ${randomTopic}.
+Унікальний номер запиту: ${Date.now()}-${Math.random()}.
+
+Попередні відповіді AI, які НЕ треба повторювати:
+${previousAiReplies || "попередніх слів немає"}
+`;
+}
+
+function formatAiDisplayText(text) {
+  return String(text || "")
+    .replace(/\r\n/g, "\n")
+    .replace(/\s*(\d+\.)\s*/g, "\n\n$1 ")
+    .replace(/\s+(Переклад:)/g, "\n$1")
+    .replace(/\s+(Пояснення:)/g, "\n$1")
+    .replace(/\s+(Приклад:)/g, "\n$1")
+    .replace(/\s+(Translation:)/g, "\n$1")
+    .replace(/\s+(Explanation:)/g, "\n$1")
+    .replace(/\s+(Example:)/g, "\n$1")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
+function renderAiText(rawText, translatedText) {
+  const text = formatAiDisplayText(translatedText || rawText);
+  const blocks = text.split(/\n{2,}/).filter(Boolean);
+
+  if (blocks.length <= 1) {
+    return <div className="ai-message-text">{text}</div>;
+  }
+
+  return (
+    <div className="ai-message-text ai-message-formatted">
+      {blocks.map((block, index) => (
+        <div key={index} className="ai-text-block">
+          {block}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function ChatPage() {
   const { roomId } = useParams();
   const navigate = useNavigate();
@@ -61,7 +136,9 @@ export default function ChatPage() {
     {
       id: "welcome",
       role: "assistant",
-      text: t("Привіт! Я AI-помічник LinguaVerse. Можу пояснити граматику, перекласти фразу, виправити речення або допомогти з навчанням."),
+      text: t(
+        "Привіт! Я AI-помічник LinguaVerse. Можу пояснити граматику, перекласти фразу, виправити речення або допомогти з навчанням."
+      ),
       createdAt: new Date().toISOString(),
     },
   ]);
@@ -82,7 +159,9 @@ export default function ChatPage() {
         message.id === "welcome"
           ? {
               ...message,
-              text: t("Привіт! Я AI-помічник LinguaVerse. Можу пояснити граматику, перекласти фразу, виправити речення або допомогти з навчанням."),
+              text: t(
+                "Привіт! Я AI-помічник LinguaVerse. Можу пояснити граматику, перекласти фразу, виправити речення або допомогти з навчанням."
+              ),
             }
           : message
       )
@@ -155,7 +234,9 @@ export default function ChatPage() {
       setSocketError("");
 
       if (!navigator.mediaDevices?.getUserMedia) {
-        setSocketError("Браузер не підтримує доступ до камери. Відкрийте сторінку через Chrome або Edge на localhost.");
+        setSocketError(
+          "Браузер не підтримує доступ до камери. Відкрийте сторінку через Chrome або Edge на localhost."
+        );
         return;
       }
 
@@ -181,7 +262,9 @@ export default function ChatPage() {
       console.error("Camera error:", err);
 
       if (err.name === "NotAllowedError") {
-        setSocketError("Доступ до камери або мікрофона заблоковано. Дозвольте Camera/Microphone у браузері.");
+        setSocketError(
+          "Доступ до камери або мікрофона заблоковано. Дозвольте Camera/Microphone у браузері."
+        );
       } else if (err.name === "NotFoundError") {
         setSocketError("Камеру або мікрофон не знайдено.");
       } else if (err.name === "NotReadableError") {
@@ -587,44 +670,51 @@ export default function ChatPage() {
     );
   }
 
-if (!isRoomMode) {
-  return (
-    <div className="chat-page">
-      <div className="chat-shell ai-only-shell">
-        <aside className="room-ai-panel ai-standalone-panel">
-          <header className="room-ai-header">
-            <div>
-              <h2 className="ai-title">
-                <span className="ai-title-icon">AI</span>
-                AI-Помічник
-              </h2>
-              <p>Запитайте про граматику, переклад, письмо або вивчення мови</p>
+  if (!isRoomMode) {
+    return (
+      <div className="chat-page">
+        <div className="chat-shell ai-only-shell">
+          <aside className="room-ai-panel ai-standalone-panel">
+            <header className="room-ai-header">
+              <div>
+                <h2 className="ai-title">
+                  <span className="ai-title-icon">AI</span>
+                  AI-Помічник
+                </h2>
+                <p>Запитайте про граматику, переклад, письмо або вивчення мови</p>
+              </div>
+            </header>
+
+            <div className="ai-quick-actions">
+              <button onClick={() => askAi("Поясни Present Simple простими словами з прикладами.")}>
+                <span className="quick-action-icon">G</span>
+                <span>Граматика</span>
+              </button>
+
+              <button onClick={() => askAi("Допоможи мені скласти коротке речення англійською.")}>
+                <span className="quick-action-icon">S</span>
+                <span>Скласти речення</span>
+              </button>
+
+              <button
+                onClick={() =>
+                  askAi("Дай мені 10 корисних слів для щоденного спілкування англійською.")
+                }
+              >
+                <span className="quick-action-icon">W</span>
+                <span>Нові слова</span>
+              </button>
             </div>
-          </header>
 
-          <div className="ai-quick-actions">
-            <button onClick={() => askAi("Поясни Present Simple простими словами з прикладами.")}>
-              <span className="quick-action-icon">G</span>
-              <span>Граматика</span>
-            </button>
-
-            <button onClick={() => askAi("Допоможи мені скласти коротке речення англійською.")}>
-              <span className="quick-action-icon">S</span>
-              <span>Скласти речення</span>
-            </button>
-
-            <button onClick={() => askAi("Дай мені 10 корисних слів для щоденного спілкування англійською.")}>
-              <span className="quick-action-icon">W</span>
-              <span>Нові слова</span>
-            </button>
-          </div>
             <div className="ai-chat-window">
               {aiMessages.map((message) => (
                 <div
                   key={message.id}
                   className={`ai-chat-message ${message.role === "user" ? "user" : "assistant"}`}
                 >
-                  <p>{translatePhrase(message.text)}</p>
+                  {message.role === "assistant"
+                    ? renderAiText(message.text, translatePhrase(message.text))
+                    : <div className="ai-message-text">{translatePhrase(message.text)}</div>}
                   <span>{formatTime(message.createdAt)}</span>
                 </div>
               ))}
@@ -729,7 +819,9 @@ if (!isRoomMode) {
                   <button
                     type="button"
                     className="video-fullscreen-btn"
-                    onClick={() => window.open(`/video-room/${roomId}`, "_blank", "width=1200,height=800")}
+                    onClick={() =>
+                      window.open(`/video-room/${roomId}`, "_blank", "width=1200,height=800")
+                    }
                   >
                     Відкрити повний відеочат
                   </button>
@@ -813,7 +905,9 @@ if (!isRoomMode) {
                   key={message.id}
                   className={`ai-chat-message ${message.role === "user" ? "user" : "assistant"}`}
                 >
-                  <p>{translatePhrase(message.text)}</p>
+                  {message.role === "assistant"
+                    ? renderAiText(message.text, translatePhrase(message.text))
+                    : <div className="ai-message-text">{translatePhrase(message.text)}</div>}
                   <span>{formatTime(message.createdAt)}</span>
                 </div>
               ))}

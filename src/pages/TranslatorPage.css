@@ -271,3 +271,58 @@ css .translator-page {
         font-size: 12px;
     }
 }
+
+
+
+.context-highlight {
+  background: #fff2a8;
+  color: #0f1b33;
+  padding: 1px 5px;
+  border-radius: 6px;
+  font-weight: 700;
+}
+
+.examples-list {
+  margin: 8px 0 0;
+  padding-left: 22px;
+}
+
+.examples-list li {
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
+
+.synonyms-list {
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.synonym-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  border-radius: 12px;
+  background: #f6f8fb;
+  border: 1px solid #e3e8ef;
+}
+
+.synonym-word {
+  font-weight: 700;
+  color: #0f1b33;
+}
+
+.synonym-arrow {
+  color: #7b8794;
+}
+
+.synonym-translation {
+  color: #344054;
+}
+
+.examples-loading {
+  margin: 0;
+  color: #5f6b7a;
+}
